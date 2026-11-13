@@ -1,0 +1,28 @@
+var searchData=
+[
+  ['e_20instalar_20aplicarota_0',['4. Descargar e instalar (&lt;span class=&quot;tt&quot;&gt;aplicarOTA&lt;/span&gt;)',['../ota.html#autotoc_md28',1,'']]],
+  ['el_20código_1',['Qué hace el código',['../rollback.html#autotoc_md35',1,'']]],
+  ['el_20equipo_20con_20la_20decisión_2',['5. Qué hace el equipo con la decisión',['../ia.html#autotoc_md21',1,'']]],
+  ['el_20equipo_3a_20dos_20particiones_3',['1. Preparar el equipo: dos particiones',['../ota.html#autotoc_md25',1,'']]],
+  ['el_20monitor_4',['Secuencia esperada en el monitor',['../rollback.html#autotoc_md37',1,'']]],
+  ['el_20problema_5',['1. El problema',['../ia.html#autotoc_md10',1,'']]],
+  ['el_20sha_20256_20y_20qué_20no_6',['6. Qué protege el SHA-256 y qué no',['../ota.html#autotoc_md30',1,'']]],
+  ['en_20el_20monitor_7',['Secuencia esperada en el monitor',['../rollback.html#autotoc_md37',1,'']]],
+  ['entrenó_8',['4. Cómo se entrenó',['../ia.html#autotoc_md19',1,'']]],
+  ['entrenar_9',['entrenar',['../namespaceentrenar__logistica.html#a961dd161e94c0aec61aebdbc6e488f72',1,'entrenar_logistica']]],
+  ['entrenar_5flogistica_10',['entrenar_logistica',['../namespaceentrenar__logistica.html',1,'']]],
+  ['entrenar_5flogistica_2epy_11',['entrenar_logistica.py',['../entrenar__logistica_8py.html',1,'']]],
+  ['enviar_12',['enviar',['../main_8cpp.html#ace44027e67c5b646c2fabbfe8f202ff3',1,'main.cpp']]],
+  ['equipo_20con_20la_20decisión_13',['5. Qué hace el equipo con la decisión',['../ia.html#autotoc_md21',1,'']]],
+  ['equipo_3a_20dos_20particiones_14',['1. Preparar el equipo: dos particiones',['../ota.html#autotoc_md25',1,'']]],
+  ['esp32_20ota_20con_20ia_15',['ESP32 OTA con IA',['../index.html',1,'']]],
+  ['esperada_20en_20el_20monitor_16',['Secuencia esperada en el monitor',['../rollback.html#autotoc_md37',1,'']]],
+  ['esta_20documentación_17',['Páginas de esta documentación',['../index.html#autotoc_md0',1,'']]],
+  ['estado_18',['Estado',['../main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49',1,'main.cpp']]],
+  ['estado_19',['estado',['../main_8cpp.html#a1152c324c35402f12adc06b09a2769cc',1,'main.cpp']]],
+  ['estructura_20del_20proyecto_20',['Estructura del proyecto',['../index.html#autotoc_md1',1,'']]],
+  ['evaluar_21',['evaluar',['../class_detector_logistico.html#a50a6f181f0ebe34dae2b0e837f0cd6ae',1,'DetectorLogistico']]],
+  ['evidencias_20de_20las_20pruebas_22',['Evidencias de las pruebas',['../evidencias.html',1,'index']]],
+  ['evidencias_2emd_23',['evidencias.md',['../evidencias_8md.html',1,'']]],
+  ['exist_5fok_24',['exist_ok',['../namespacemain.html#ab0bf13547032e9bb1cc6c8ede308794a',1,'main']]]
+];

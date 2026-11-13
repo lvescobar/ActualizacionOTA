@@ -1,0 +1,12 @@
+# PlatformIO / editor
+.pio/
+.vscode/
+# Datos privados
+src/secrets.h
+# Binarios y manifest locales (se regeneran con publicar.py)
+servidor/fw/*.bin
+servidor/fw/manifest.json
+# Python
+__pycache__/
+# Documentacion generada por Doxygen
+*.rar

@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.14.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ESP32 OTA con IA: Actualización OTA paso a paso</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">ESP32 OTA con IA
+   </div>
+   <div id="projectbrief">OTA seguro, rollback por software y deteccion de anomalias con regresion logistica</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generado por Doxygen 1.14.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Buscar',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('ota.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Cargando...</div>
+<div class="SRStatus" id="Searching">Buscando...</div>
+<div class="SRStatus" id="NoMatches">Nada coincide</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Actualización OTA paso a paso </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p>OTA significa <em>Over-The-Air</em>: actualizar el programa del ESP32 por Wi-Fi, sin cable USB. Esta página explica cada etapa del proceso tal como está implementado en <span class="tt"><a class="el" href="main_8cpp.html" title="Firmware del ESP32: actualizacion OTA segura, rollback por software y deteccion de anomalias con regr...">main.cpp</a></span>, <span class="tt"><a class="el" href="main_8py.html">servidor/main.py</a></span> y <span class="tt"><a class="el" href="publicar_8py.html">servidor/publicar.py</a></span>.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md24"></a>
+Visión general</h2>
+<div class="fragment"><div class="line">1. Compilar         pio run -e v120                  -&gt; firmware.bin</div>
+<div class="line">2. Publicar         python publicar.py 1.2.0 ...     -&gt; fw/firmware_1.2.0.bin + fw/manifest.json</div>
+<div class="line">3. Consultar        ESP32: GET /version.json         (cada 30 s)</div>
+<div class="line">4. Comparar         ¿la versión del manifiesto es distinta de la mía?</div>
+<div class="line">5. Descargar        ESP32: GET /fw/firmware_1.2.0.bin (calculando el SHA-256 mientras llega)</div>
+<div class="line">6. Verificar        ¿el hash calculado = el hash del manifiesto?</div>
+<div class="line">7. Instalar         Update.end(): cambia la partición de arranque</div>
+<div class="line">8. Reiniciar        ESP.restart() arranca la versión nueva</div>
+<div class="line">9. Validar          si funciona, marcarValida(); si no, rollback (ver @ref rollback)</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md25"></a>
+1. Preparar el equipo: dos particiones</h2>
+<p>El ESP32 tiene la memoria flash dividida en particiones. Con <span class="tt">board_build.partitions =
+min_spiffs.csv</span> (en <span class="tt">platformio.ini</span>) hay <b>dos ranuras de aplicación</b> (<span class="tt">app0</span> y <span class="tt">app1</span>). El firmware corre desde una de ellas y la actualización se escribe en la <b>otra</b>. Mientras se descarga, la versión que está funcionando no se toca: si algo sale mal, el equipo sigue con la versión vieja.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md26"></a>
+2. Publicar una versión (<span class="tt">publicar.py</span>)</h2>
+<p>Se ejecuta en el PC, en la carpeta <span class="tt">servidor/</span>:</p>
+<div class="fragment"><div class="line">python publicar.py 1.2.0 ..\.pio\build\v120\firmware.bin</div>
+</div><!-- fragment --><p>El script hace tres cosas:</p>
+<ol type="1">
+<li>Copia el <span class="tt">.bin</span> a <span class="tt">fw/firmware_1.2.0.bin</span>.</li>
+<li>Calcula su <b>SHA-256</b> (una huella digital de 64 caracteres hexadecimales: si cambia un solo bit del archivo, la huella cambia por completo).</li>
+<li>Escribe <span class="tt">fw/manifest.json</span> con la versión, la dirección de descarga y la huella:</li>
+</ol>
+<div class="fragment"><div class="line">{&quot;version&quot;: &quot;1.2.0&quot;,</div>
+<div class="line"> &quot;url&quot;: &quot;http://192.168.53.86:8000/fw/firmware_1.2.0.bin&quot;,</div>
+<div class="line"> &quot;sha256&quot;: &quot;fc71a755ce90f7db41cef1fb4c222c7c5564d593fc57f3e890532e837592028c&quot;}</div>
+</div><!-- fragment --><p>Mientras no se publique nada, <span class="tt">GET /version.json</span> responde <b>404</b>. Eso es lo que se ve en el monitor con la v1.0.0 (<span class="tt">version.json -&gt; HTTP 404</span>).</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md27"></a>
+3. Consultar si hay versión nueva (<span class="tt">checkOTA</span>)</h2>
+<p>Cada <b>30 segundos</b> (60 s si la señal Wi-Fi es débil, RSSI &lt; -80 dBm) el ESP32 llama a <span class="tt"><a class="el" href="main_8cpp.html#ac819907982fbf11bf3c699454de5a027" title="Pregunta al servidor cual es la ultima version y la instala si es nueva.">checkOTA()</a></span>:</p>
+<ol type="1">
+<li>Hace <span class="tt">GET /version.json</span> y muestra <span class="tt">version.json -&gt; HTTP 200</span> en el monitor.</li>
+<li>Lee el JSON con la librería ArduinoJson y extrae <span class="tt">version</span>, <span class="tt">url</span> y <span class="tt">sha256</span>.</li>
+<li><b>No actualiza</b> si la versión del manifiesto es igual a la que ya corre (<span class="tt">FW_VERSION</span>) o si esa versión fue marcada como mala por el rollback (se guarda en la memoria NVS con la clave <span class="tt">bad</span>).</li>
+<li>Si es distinta, imprime <span class="tt">Actualizando a X.Y.Z</span> y llama a <span class="tt"><a class="el" href="main_8cpp.html#a8de473ff68ee746f0034e221366a08f1" title="Descarga un .bin, calcula su SHA-256 mientras llega y lo instala solo si el hash coincide.">aplicarOTA()</a></span>.</li>
+</ol>
+<blockquote class="doxtable">
+<p>La comparación es de <b>igualdad</b>, no de "mayor que". Cualquier versión distinta publicada en el servidor se instalaría, incluso una anterior. </p>
+</blockquote>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md28"></a>
+4. Descargar e instalar (<span class="tt">aplicarOTA</span>)</h2>
+<p>Esta es la parte central. La función recibe la URL y el hash esperado y sigue estos pasos:</p>
+<ol type="1">
+<li><b>Abre la descarga</b>: <span class="tt">GET</span> a la URL del <span class="tt">.bin</span>. Si no responde 200, termina sin cambios.</li>
+<li><b>Reserva espacio</b>: <span class="tt">Update.begin(total)</span> prepara la partición libre con el tamaño del archivo.</li>
+<li><b>Inicia el cálculo del SHA-256</b> con la librería mbedTLS.</li>
+<li><b>Descarga en bloques de 1 KB</b>. Cada bloque se hacen dos cosas a la vez: se escribe en la partición libre (<span class="tt">Update.write</span>) y se agrega al cálculo del hash (<span class="tt">mbedtls_sha256_update</span>). Así no hace falta guardar el archivo completo en RAM.</li>
+<li><b>LEDs durante la descarga</b>: rojo y amarillo se <b>alternan rápido</b> (cada 150 ms).</li>
+<li><b>Protección contra corte de red</b>: si pasan <b>10 s sin recibir datos</b>, se aborta con el mensaje <span class="tt">OTA incompleta</span> y no se cambia nada.</li>
+<li><b>Verificación</b>: al terminar, se compara el hash calculado con el del manifiesto. Si son distintos, <span class="tt">Update.abort()</span> y el monitor muestra <span class="tt">HASH INVALIDO, se descarta</span>.</li>
+<li><b>Instalación</b>: solo si el hash coincide se llama a <span class="tt">Update.end(true)</span>, que <b>recién entonces</b> marca la partición nueva como la de arranque.</li>
+</ol>
+<p>Si el hash no coincide, el firmware descargado se descarta y el equipo continúa con la versión actual, sin reiniciarse.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md29"></a>
+5. Reinicio y validación</h2>
+<p>Cuando <span class="tt">aplicarOTA</span> devuelve <span class="tt">true</span>, <span class="tt">checkOTA</span>:</p>
+<ol type="1">
+<li>Guarda en la memoria NVS <span class="tt">pending = true</span> y <span class="tt">tries = 0</span> ("el firmware nuevo aún no se validó").</li>
+<li>Espera 200 ms y ejecuta <span class="tt">ESP.restart()</span>.</li>
+</ol>
+<p>El reinicio es <b>automático</b>: tras un OTA no hace falta pulsar el botón EN. (El botón EN solo se necesita después de grabar por USB.) Al arrancar, el firmware nuevo debe validarse solo; ver la página <a class="el" href="rollback.html">Rollback por software</a>.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md30"></a>
+6. Qué protege el SHA-256 y qué no</h2>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Protege contra  </th><th class="markdownTableHeadNone">No protege contra  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Descarga corrupta o incompleta.  </td><td class="markdownTableBodyNone">Alguien que controle el servidor y publique un <span class="tt">.bin</span> malicioso <b>junto con su hash</b>.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Archivo modificado en tránsito sin recalcular el hash.  </td><td class="markdownTableBodyNone">Ataques en la red, porque se usa HTTP y no HTTPS.  </td></tr>
+</table>
+<p>Para un producto real se agregaría <b>HTTPS</b> y <b>firma digital</b> del firmware. En este proyecto el objetivo es demostrar la integridad de la descarga.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md31"></a>
+7. Comportamiento con señal débil</h2>
+<p>Si el RSSI es menor que -80 dBm, el ESP32:</p>
+<ul>
+<li>envía <b>1 de cada 3</b> muestras de telemetría, y</li>
+<li>consulta el OTA cada <b>60 s</b> en lugar de cada 30 s.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md32"></a>
+8. Pruebas realizadas</h2>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Prueba  </th><th class="markdownTableHeadNone">Cómo se hizo  </th><th class="markdownTableHeadNone">Resultado esperado  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">OTA exitoso 1.0.0 -&gt; 1.1.0  </td><td class="markdownTableBodyNone"><span class="tt"><a class="el" href="publicar_8py.html">publicar.py</a> 1.1.0 ...</span>  </td><td class="markdownTableBodyNone">En máximo 30 s: LEDs alternándose y luego amarillo lento.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">OTA exitoso 1.1.0 -&gt; 1.2.0  </td><td class="markdownTableBodyNone"><span class="tt"><a class="el" href="publicar_8py.html">publicar.py</a> 1.2.0 ...</span>  </td><td class="markdownTableBodyNone">LEDs alternándose y luego rojo + amarillo fijos.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Hash inválido  </td><td class="markdownTableBodyNone">Publicar y cambiar una letra del <span class="tt">sha256</span> en <span class="tt">fw/manifest.json</span>  </td><td class="markdownTableBodyNone">Monitor: <span class="tt">HASH INVALIDO</span>; sigue en la versión anterior.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Corte de red  </td><td class="markdownTableBodyNone">Apagar el hotspot durante la descarga  </td><td class="markdownTableBodyNone">A los 10 s: <span class="tt">OTA incompleta</span>; no se instala nada.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Señal débil  </td><td class="markdownTableBodyNone">Tapar el ESP32 con aluminio hasta RSSI &lt; -80  </td><td class="markdownTableBodyNone">El servidor recibe 1 de cada 3 muestras.  </td></tr>
+</table>
+<p>Las capturas y GIFs están en la página <a class="el" href="evidencias.html">Evidencias de las pruebas</a>. </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="index.html">ESP32 OTA con IA</a></li>
+    <li class="footer">Generado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+  </ul>
+</div>
+</body>
+</html>

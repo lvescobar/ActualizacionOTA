@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.14.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ESP32 OTA con IA: Archivo de código fuente src/detector_logistico.h</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">ESP32 OTA con IA
+   </div>
+   <div id="projectbrief">OTA seguro, rollback por software y deteccion de anomalias con regresion logistica</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generado por Doxygen 1.14.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Buscar',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('detector__logistico_8h_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Cargando...</div>
+<div class="SRStatus" id="Searching">Buscando...</div>
+<div class="SRStatus" id="NoMatches">Nada coincide</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">detector_logistico.h</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="detector__logistico_8h.html">Ir a la documentación de este archivo.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#ifndef DETECTOR_LOGISTICO_H</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#define DETECTOR_LOGISTICO_H</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;math.h&gt;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span></div>
+<div class="foldopen" id="foldopen00028" data-start="{" data-end="};">
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="class_detector_logistico.html">   28</a></span><span class="keyword">class </span><a class="code hl_function" href="class_detector_logistico.html#a3832ff2114c4314e9c643103317a349b">DetectorLogistico</a> {</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#aec4f2a4f611aa42ea774f8c8ab157863">   31</a></span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">int</span> <a class="code hl_variable" href="class_detector_logistico.html#aec4f2a4f611aa42ea774f8c8ab157863">MUESTRAS_CALIBRACION</a> = 30;</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#ab14921117f38748c1e637cf969bc62da">   33</a></span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">float</span> <a class="code hl_variable" href="class_detector_logistico.html#ab14921117f38748c1e637cf969bc62da">W_TEMP</a>  = 1.6997f;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#aac9d736c756e3789baa2c9762d9745e0">   35</a></span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">float</span> <a class="code hl_variable" href="class_detector_logistico.html#aac9d736c756e3789baa2c9762d9745e0">W_TACTO</a> = 1.6760f;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#a47a6965eb1643995d417a6bcfce4d9d1">   37</a></span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">float</span> <a class="code hl_variable" href="class_detector_logistico.html#a47a6965eb1643995d417a6bcfce4d9d1">SESGO</a>   = -7.3083f;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#a9687fc16f63334bf7ebc17aaf25514ca">   39</a></span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">float</span> <a class="code hl_variable" href="class_detector_logistico.html#a9687fc16f63334bf7ebc17aaf25514ca">UMBRAL_P</a> = 0.5f;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#a952e0c13f093d8238cde2b5931ac9599">   41</a></span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">float</span> <a class="code hl_variable" href="class_detector_logistico.html#a952e0c13f093d8238cde2b5931ac9599">TOPE_Z</a>  = 10.0f;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span></div>
+<div class="foldopen" id="foldopen00050" data-start="{" data-end="}">
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#a3832ff2114c4314e9c643103317a349b">   50</a></span>  <a class="code hl_function" href="class_detector_logistico.html#a3832ff2114c4314e9c643103317a349b">DetectorLogistico</a>(<span class="keywordtype">float</span> stdMinTemp, <span class="keywordtype">float</span> stdMinTacto) {</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    stdMin_[0] = stdMinTemp;</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    stdMin_[1] = stdMinTacto;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>  }</div>
+</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span></div>
+<div class="foldopen" id="foldopen00064" data-start="{" data-end="}">
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#a50a6f181f0ebe34dae2b0e837f0cd6ae">   64</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_detector_logistico.html#a50a6f181f0ebe34dae2b0e837f0cd6ae">evaluar</a>(<span class="keywordtype">float</span> temp, <span class="keywordtype">float</span> tacto) {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keyword">const</span> <span class="keywordtype">float</span> x[2] = {temp, tacto};</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    <span class="comment">// ---- Fase 1: calibracion (algoritmo de Welford: media y varianza) ----</span></div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    <span class="keywordflow">if</span> (n_ &lt; <a class="code hl_variable" href="class_detector_logistico.html#aec4f2a4f611aa42ea774f8c8ab157863">MUESTRAS_CALIBRACION</a>) {</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>      n_++;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 2; i++) {</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <span class="keywordtype">float</span> d = x[i] - media_[i];</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        media_[i] += d / n_;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        m2_[i] += d * (x[i] - media_[i]);</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>      }</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>      <span class="keywordflow">if</span> (n_ == <a class="code hl_variable" href="class_detector_logistico.html#aec4f2a4f611aa42ea774f8c8ab157863">MUESTRAS_CALIBRACION</a>) {</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 2; i++) {</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>          <span class="keywordtype">float</span> s = sqrtf(m2_[i] / (<a class="code hl_variable" href="class_detector_logistico.html#aec4f2a4f611aa42ea774f8c8ab157863">MUESTRAS_CALIBRACION</a> - 1));</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>          desv_[i] = (s &gt; stdMin_[i]) ? s : stdMin_[i];</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        }</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>      }</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>      ultimaProb_ = 0.0f;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>      <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    }</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    <span class="comment">// ---- Fase 2: caracteristicas |z| (limitadas a TOPE_Z) ----</span></div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordtype">float</span> f[2];</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 2; i++) {</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>      f[i] = fabsf(x[i] - media_[i]) / desv_[i];</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>      <span class="keywordflow">if</span> (f[i] &gt; <a class="code hl_variable" href="class_detector_logistico.html#a952e0c13f093d8238cde2b5931ac9599">TOPE_Z</a>) f[i] = <a class="code hl_variable" href="class_detector_logistico.html#a952e0c13f093d8238cde2b5931ac9599">TOPE_Z</a>;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    }</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="comment">// ---- Fase 3: regresion logistica ----</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="keywordtype">float</span> s = <a class="code hl_variable" href="class_detector_logistico.html#a47a6965eb1643995d417a6bcfce4d9d1">SESGO</a> + <a class="code hl_variable" href="class_detector_logistico.html#ab14921117f38748c1e637cf969bc62da">W_TEMP</a> * f[0] + <a class="code hl_variable" href="class_detector_logistico.html#aac9d736c756e3789baa2c9762d9745e0">W_TACTO</a> * f[1];</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    ultimaProb_ = 1.0f / (1.0f + expf(-s));</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordtype">bool</span> anom = ultimaProb_ &gt; <a class="code hl_variable" href="class_detector_logistico.html#a9687fc16f63334bf7ebc17aaf25514ca">UMBRAL_P</a>;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span> </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <span class="comment">// ---- Fase 4: solo los datos normales ajustan la media (deriva lenta) ----</span></div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keywordflow">if</span> (!anom) {</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>      <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 2; i++) media_[i] += TASA_DERIVA * (x[i] - media_[i]);</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>      nAnomalias_++;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    }</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keywordflow">return</span> anom;</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>  }</div>
+</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span></div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#a2b472887f8b6f47ee817d3963d11a078">  107</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="class_detector_logistico.html#a2b472887f8b6f47ee817d3963d11a078">calibrado</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> n_ &gt;= <a class="code hl_variable" href="class_detector_logistico.html#aec4f2a4f611aa42ea774f8c8ab157863">MUESTRAS_CALIBRACION</a>; }</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#a819b2d3924e7283c7528202dbc4ad5f8">  109</a></span>  <span class="keywordtype">float</span> <a class="code hl_function" href="class_detector_logistico.html#a819b2d3924e7283c7528202dbc4ad5f8">probabilidad</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> ultimaProb_; }</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno"><a class="line" href="class_detector_logistico.html#afd704463e44ebf769a93042afcafecab">  111</a></span>  <span class="keywordtype">int</span> <a class="code hl_function" href="class_detector_logistico.html#afd704463e44ebf769a93042afcafecab">totalAnomalias</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> nAnomalias_; }</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>  <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">float</span> TASA_DERIVA = 0.05f;</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  <span class="keywordtype">float</span> stdMin_[2];                 </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>  <span class="keywordtype">float</span> media_[2] = {0, 0};         </div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  <span class="keywordtype">float</span> m2_[2]    = {0, 0};         </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  <span class="keywordtype">float</span> desv_[2]  = {1, 1};         </div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>  <span class="keywordtype">float</span> ultimaProb_ = 0.0f;         </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>  <span class="keywordtype">int</span>   n_ = 0;                     </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>  <span class="keywordtype">int</span>   nAnomalias_ = 0;            </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>};</div>
+</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span><span class="preprocessor">#endif  </span><span class="comment">// DETECTOR_LOGISTICO_H</span></div>
+<div class="ttc" id="aclass_detector_logistico_html_a2b472887f8b6f47ee817d3963d11a078"><div class="ttname"><a href="class_detector_logistico.html#a2b472887f8b6f47ee817d3963d11a078">DetectorLogistico::calibrado</a></div><div class="ttdeci">bool calibrado() const</div><div class="ttdef"><b>Definition</b> <a href="#l00107">detector_logistico.h:107</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_a3832ff2114c4314e9c643103317a349b"><div class="ttname"><a href="class_detector_logistico.html#a3832ff2114c4314e9c643103317a349b">DetectorLogistico::DetectorLogistico</a></div><div class="ttdeci">DetectorLogistico(float stdMinTemp, float stdMinTacto)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition</b> <a href="#l00050">detector_logistico.h:50</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_a47a6965eb1643995d417a6bcfce4d9d1"><div class="ttname"><a href="class_detector_logistico.html#a47a6965eb1643995d417a6bcfce4d9d1">DetectorLogistico::SESGO</a></div><div class="ttdeci">static constexpr float SESGO</div><div class="ttdef"><b>Definition</b> <a href="#l00037">detector_logistico.h:37</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_a50a6f181f0ebe34dae2b0e837f0cd6ae"><div class="ttname"><a href="class_detector_logistico.html#a50a6f181f0ebe34dae2b0e837f0cd6ae">DetectorLogistico::evaluar</a></div><div class="ttdeci">bool evaluar(float temp, float tacto)</div><div class="ttdoc">Evalua una muestra.</div><div class="ttdef"><b>Definition</b> <a href="#l00064">detector_logistico.h:64</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_a819b2d3924e7283c7528202dbc4ad5f8"><div class="ttname"><a href="class_detector_logistico.html#a819b2d3924e7283c7528202dbc4ad5f8">DetectorLogistico::probabilidad</a></div><div class="ttdeci">float probabilidad() const</div><div class="ttdef"><b>Definition</b> <a href="#l00109">detector_logistico.h:109</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_a952e0c13f093d8238cde2b5931ac9599"><div class="ttname"><a href="class_detector_logistico.html#a952e0c13f093d8238cde2b5931ac9599">DetectorLogistico::TOPE_Z</a></div><div class="ttdeci">static constexpr float TOPE_Z</div><div class="ttdef"><b>Definition</b> <a href="#l00041">detector_logistico.h:41</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_a9687fc16f63334bf7ebc17aaf25514ca"><div class="ttname"><a href="class_detector_logistico.html#a9687fc16f63334bf7ebc17aaf25514ca">DetectorLogistico::UMBRAL_P</a></div><div class="ttdeci">static constexpr float UMBRAL_P</div><div class="ttdef"><b>Definition</b> <a href="#l00039">detector_logistico.h:39</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_aac9d736c756e3789baa2c9762d9745e0"><div class="ttname"><a href="class_detector_logistico.html#aac9d736c756e3789baa2c9762d9745e0">DetectorLogistico::W_TACTO</a></div><div class="ttdeci">static constexpr float W_TACTO</div><div class="ttdef"><b>Definition</b> <a href="#l00035">detector_logistico.h:35</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_ab14921117f38748c1e637cf969bc62da"><div class="ttname"><a href="class_detector_logistico.html#ab14921117f38748c1e637cf969bc62da">DetectorLogistico::W_TEMP</a></div><div class="ttdeci">static constexpr float W_TEMP</div><div class="ttdef"><b>Definition</b> <a href="#l00033">detector_logistico.h:33</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_aec4f2a4f611aa42ea774f8c8ab157863"><div class="ttname"><a href="class_detector_logistico.html#aec4f2a4f611aa42ea774f8c8ab157863">DetectorLogistico::MUESTRAS_CALIBRACION</a></div><div class="ttdeci">static constexpr int MUESTRAS_CALIBRACION</div><div class="ttdef"><b>Definition</b> <a href="#l00031">detector_logistico.h:31</a></div></div>
+<div class="ttc" id="aclass_detector_logistico_html_afd704463e44ebf769a93042afcafecab"><div class="ttname"><a href="class_detector_logistico.html#afd704463e44ebf769a93042afcafecab">DetectorLogistico::totalAnomalias</a></div><div class="ttdeci">int totalAnomalias() const</div><div class="ttdef"><b>Definition</b> <a href="#l00111">detector_logistico.h:111</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a href="detector__logistico_8h.html">detector_logistico.h</a></li>
+    <li class="footer">Generado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+  </ul>
+</div>
+</body>
+</html>

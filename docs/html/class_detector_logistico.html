@@ -1,0 +1,465 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.14.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ESP32 OTA con IA: Referencia de la clase DetectorLogistico</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">ESP32 OTA con IA
+   </div>
+   <div id="projectbrief">OTA seguro, rollback por software y deteccion de anomalias con regresion logistica</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generado por Doxygen 1.14.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Buscar',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('class_detector_logistico.html','','class_detector_logistico-members'); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Cargando...</div>
+<div class="SRStatus" id="Searching">Buscando...</div>
+<div class="SRStatus" id="NoMatches">Nada coincide</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">Referencia de la clase DetectorLogistico</div></div>
+</div><!--header-->
+<div class="contents">
+
+<p>Clasifica cada muestra (temperatura, tacto) como normal o anomalia.  
+ <a href="#details">Más...</a></p>
+
+<p><code>#include &lt;<a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-methods" class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Métodos públicos</h2></td></tr>
+<tr class="memitem:a3832ff2114c4314e9c643103317a349b" id="r_a3832ff2114c4314e9c643103317a349b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3832ff2114c4314e9c643103317a349b">DetectorLogistico</a> (float stdMinTemp, float stdMinTacto)</td></tr>
+<tr class="memdesc:a3832ff2114c4314e9c643103317a349b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <br /></td></tr>
+<tr class="memitem:a50a6f181f0ebe34dae2b0e837f0cd6ae" id="r_a50a6f181f0ebe34dae2b0e837f0cd6ae"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a50a6f181f0ebe34dae2b0e837f0cd6ae">evaluar</a> (float temp, float tacto)</td></tr>
+<tr class="memdesc:a50a6f181f0ebe34dae2b0e837f0cd6ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Evalua una muestra.  <br /></td></tr>
+<tr class="memitem:a2b472887f8b6f47ee817d3963d11a078" id="r_a2b472887f8b6f47ee817d3963d11a078"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2b472887f8b6f47ee817d3963d11a078">calibrado</a> () const</td></tr>
+<tr class="memitem:a819b2d3924e7283c7528202dbc4ad5f8" id="r_a819b2d3924e7283c7528202dbc4ad5f8"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a819b2d3924e7283c7528202dbc4ad5f8">probabilidad</a> () const</td></tr>
+<tr class="memitem:afd704463e44ebf769a93042afcafecab" id="r_afd704463e44ebf769a93042afcafecab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afd704463e44ebf769a93042afcafecab">totalAnomalias</a> () const</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 id="header-pub-static-attribs" class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Atributos públicos estáticos</h2></td></tr>
+<tr class="memitem:aec4f2a4f611aa42ea774f8c8ab157863" id="r_aec4f2a4f611aa42ea774f8c8ab157863"><td class="memItemLeft" align="right" valign="top">static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aec4f2a4f611aa42ea774f8c8ab157863">MUESTRAS_CALIBRACION</a> = 30</td></tr>
+<tr class="memitem:ab14921117f38748c1e637cf969bc62da" id="r_ab14921117f38748c1e637cf969bc62da"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab14921117f38748c1e637cf969bc62da">W_TEMP</a> = 1.6997f</td></tr>
+<tr class="memitem:aac9d736c756e3789baa2c9762d9745e0" id="r_aac9d736c756e3789baa2c9762d9745e0"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac9d736c756e3789baa2c9762d9745e0">W_TACTO</a> = 1.6760f</td></tr>
+<tr class="memitem:a47a6965eb1643995d417a6bcfce4d9d1" id="r_a47a6965eb1643995d417a6bcfce4d9d1"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a47a6965eb1643995d417a6bcfce4d9d1">SESGO</a> = -7.3083f</td></tr>
+<tr class="memitem:a9687fc16f63334bf7ebc17aaf25514ca" id="r_a9687fc16f63334bf7ebc17aaf25514ca"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9687fc16f63334bf7ebc17aaf25514ca">UMBRAL_P</a> = 0.5f</td></tr>
+<tr class="memitem:a952e0c13f093d8238cde2b5931ac9599" id="r_a952e0c13f093d8238cde2b5931ac9599"><td class="memItemLeft" align="right" valign="top">static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a952e0c13f093d8238cde2b5931ac9599">TOPE_Z</a> = 10.0f</td></tr>
+</table>
+<a name="details" id="details"></a><h2 id="header-details" class="groupheader">Descripción detallada</h2>
+<div class="textblock"><p>Clasifica cada muestra (temperatura, tacto) como normal o anomalia. </p>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00028">28</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+</div><a name="doc-constructors" id="doc-constructors"></a><h2 id="header-doc-constructors" class="groupheader">Documentación de constructores y destructores</h2>
+<a id="a3832ff2114c4314e9c643103317a349b" name="a3832ff2114c4314e9c643103317a349b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3832ff2114c4314e9c643103317a349b">&#9670;&#160;</a></span>DetectorLogistico()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DetectorLogistico::DetectorLogistico </td>
+          <td>(</td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>stdMinTemp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>stdMinTacto</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<dl class="params"><dt>Parámetros</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">stdMinTemp</td><td>Piso de la desviacion estandar de la temperatura (grados C). </td></tr>
+    <tr><td class="paramname">stdMinTacto</td><td>Piso de la desviacion estandar del valor tactil.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>El piso evita dividir por casi cero cuando el sensor casi no varia. </p>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00050">50</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a name="doc-func-members" id="doc-func-members"></a><h2 id="header-doc-func-members" class="groupheader">Documentación de funciones miembro</h2>
+<a id="a2b472887f8b6f47ee817d3963d11a078" name="a2b472887f8b6f47ee817d3963d11a078"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b472887f8b6f47ee817d3963d11a078">&#9670;&#160;</a></span>calibrado()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DetectorLogistico::calibrado </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Devuelve</dt><dd>true cuando ya termino la calibracion. </dd></dl>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00107">107</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a id="a50a6f181f0ebe34dae2b0e837f0cd6ae" name="a50a6f181f0ebe34dae2b0e837f0cd6ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50a6f181f0ebe34dae2b0e837f0cd6ae">&#9670;&#160;</a></span>evaluar()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DetectorLogistico::evaluar </td>
+          <td>(</td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>temp</em></span>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>tacto</em></span>&#160;)</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Evalua una muestra. </p>
+<dl class="params"><dt>Parámetros</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">temp</td><td>Temperatura interna del chip (grados C). </td></tr>
+    <tr><td class="paramname">tacto</td><td>Valor del sensor tactil. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Devuelve</dt><dd>true si la muestra es una anomalia, false si es normal.</dd></dl>
+<p>Durante la calibracion siempre devuelve false. Las muestras anomalas no actualizan la media (para no "acostumbrarse" a las anomalias). </p>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00064">64</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a id="a819b2d3924e7283c7528202dbc4ad5f8" name="a819b2d3924e7283c7528202dbc4ad5f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a819b2d3924e7283c7528202dbc4ad5f8">&#9670;&#160;</a></span>probabilidad()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float DetectorLogistico::probabilidad </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Devuelve</dt><dd>Probabilidad de anomalia de la ultima muestra (0 a 1). </dd></dl>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00109">109</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a id="afd704463e44ebf769a93042afcafecab" name="afd704463e44ebf769a93042afcafecab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd704463e44ebf769a93042afcafecab">&#9670;&#160;</a></span>totalAnomalias()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int DetectorLogistico::totalAnomalias </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel inline">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Devuelve</dt><dd>Cantidad de muestras clasificadas como anomalia. </dd></dl>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00111">111</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a name="doc-variable-members" id="doc-variable-members"></a><h2 id="header-doc-variable-members" class="groupheader">Documentación de datos miembro</h2>
+<a id="aec4f2a4f611aa42ea774f8c8ab157863" name="aec4f2a4f611aa42ea774f8c8ab157863"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec4f2a4f611aa42ea774f8c8ab157863">&#9670;&#160;</a></span>MUESTRAS_CALIBRACION</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int DetectorLogistico::MUESTRAS_CALIBRACION = 30</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Cantidad de muestras que se usan para aprender lo "normal". </p>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00031">31</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a id="a47a6965eb1643995d417a6bcfce4d9d1" name="a47a6965eb1643995d417a6bcfce4d9d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47a6965eb1643995d417a6bcfce4d9d1">&#9670;&#160;</a></span>SESGO</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float DetectorLogistico::SESGO = -7.3083f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Sesgo (termino independiente) del modelo. </p>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00037">37</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a id="a952e0c13f093d8238cde2b5931ac9599" name="a952e0c13f093d8238cde2b5931ac9599"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a952e0c13f093d8238cde2b5931ac9599">&#9670;&#160;</a></span>TOPE_Z</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float DetectorLogistico::TOPE_Z = 10.0f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Tope de |z| para que un valor extremo no sature el modelo. </p>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00041">41</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a id="a9687fc16f63334bf7ebc17aaf25514ca" name="a9687fc16f63334bf7ebc17aaf25514ca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9687fc16f63334bf7ebc17aaf25514ca">&#9670;&#160;</a></span>UMBRAL_P</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float DetectorLogistico::UMBRAL_P = 0.5f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Probabilidad minima para declarar anomalia. </p>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00039">39</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a id="aac9d736c756e3789baa2c9762d9745e0" name="aac9d736c756e3789baa2c9762d9745e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac9d736c756e3789baa2c9762d9745e0">&#9670;&#160;</a></span>W_TACTO</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float DetectorLogistico::W_TACTO = 1.6760f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Peso de |z| del tacto (resultado de <a class="el" href="entrenar__logistica_8py.html">entrenar_logistica.py</a>). </p>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00035">35</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<a id="ab14921117f38748c1e637cf969bc62da" name="ab14921117f38748c1e637cf969bc62da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab14921117f38748c1e637cf969bc62da">&#9670;&#160;</a></span>W_TEMP</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float DetectorLogistico::W_TEMP = 1.6997f</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel static">static</span><span class="mlabel constexpr">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Peso de |z| de la temperatura (resultado de <a class="el" href="entrenar__logistica_8py.html">entrenar_logistica.py</a>). </p>
+
+<p class="definition">Definición en la línea <a class="el" href="detector__logistico_8h_source.html#l00033">33</a> del archivo <a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a>.</p>
+
+</div>
+</div>
+<hr/>La documentación de esta clase está generada del siguiente archivo:<ul>
+<li>src/<a class="el" href="detector__logistico_8h_source.html">detector_logistico.h</a></li>
+</ul>
+</div><!-- contents -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="class_detector_logistico.html">DetectorLogistico</a></li>
+    <li class="footer">Generado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+  </ul>
+</div>
+</body>
+</html>

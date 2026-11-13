@@ -1,0 +1,169 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.14.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ESP32 OTA con IA: Arquitectura general</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">ESP32 OTA con IA
+   </div>
+   <div id="projectbrief">OTA seguro, rollback por software y deteccion de anomalias con regresion logistica</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generado por Doxygen 1.14.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Buscar',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('arquitectura.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Cargando...</div>
+<div class="SRStatus" id="Searching">Buscando...</div>
+<div class="SRStatus" id="NoMatches">Nada coincide</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Arquitectura general </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><h2 class="doxsection"><a class="anchor" id="autotoc_md5"></a>
+Componentes</h2>
+<p>El sistema tiene tres partes que se comunican por HTTP dentro del mismo hotspot Wi-Fi.</p>
+<div class="fragment"><div class="line">       Hotspot Wi-Fi (celular)</div>
+<div class="line">┌──────────────┐                 ┌─────────────────────────┐</div>
+<div class="line">│    ESP32     │  POST /telemetry│  PC: servidor FastAPI   │</div>
+<div class="line">│  (firmware)  │ ───────────────►│  - guarda telemetria.csv│</div>
+<div class="line">│  LED rojo    │                 │                         │</div>
+<div class="line">│  LED amarillo│  GET /version.json                        │</div>
+<div class="line">│  sensor tacto│ ───────────────►│  - entrega el manifiesto│</div>
+<div class="line">│  temp. chip  │                 │                         │</div>
+<div class="line">│              │  GET /fw/firmware_X.bin                   │</div>
+<div class="line">│              │ ───────────────►│  - entrega el .bin      │</div>
+<div class="line">└──────────────┘                 └─────────────────────────┘</div>
+<div class="line">                                       ▲</div>
+<div class="line">                                       │ publicar.py copia el .bin a fw/</div>
+<div class="line">                                       │ y escribe fw/manifest.json (con SHA-256)</div>
+<div class="line">                                 Compilación con PlatformIO (pio run -e vXXX)</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md6"></a>
+Qué hace cada pieza</h2>
+<ul>
+<li><b>ESP32 (<span class="tt"><a class="el" href="main_8cpp.html" title="Firmware del ESP32: actualizacion OTA segura, rollback por software y deteccion de anomalias con regr...">main.cpp</a></span>)</b>: cada 5 s lee la temperatura del chip y el sensor táctil (GPIO 4), decide con la IA si es una anomalía y envía la muestra al servidor. Cada 30 s pregunta si hay una versión nueva.</li>
+<li><b>Servidor (<span class="tt"><a class="el" href="main_8py.html">servidor/main.py</a></span>)</b>: usa FastAPI y tiene tres funciones:<ul>
+<li><span class="tt">GET /version.json</span>: devuelve el manifiesto de la última versión publicada. Responde 404 si todavía no se ha publicado ninguna.</li>
+<li><span class="tt">POST /telemetry</span>: recibe una muestra en JSON y la agrega a <span class="tt">telemetria.csv</span>.</li>
+<li><span class="tt">/fw</span>: carpeta de archivos estáticos desde donde se descarga el <span class="tt">.bin</span>.</li>
+</ul>
+</li>
+<li><b><span class="tt"><a class="el" href="publicar_8py.html">publicar.py</a></span></b>: prepara una versión nueva (copia el <span class="tt">.bin</span> y crea el manifiesto).</li>
+<li><b>PlatformIO (<span class="tt">platformio.ini</span>)</b>: compila el mismo código en cuatro versiones cambiando solo dos banderas de compilación.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md7"></a>
+Una sola base de código, cuatro versiones</h2>
+<p>El archivo <span class="tt">platformio.ini</span> define cuatro entornos. Cada uno pasa al compilador dos banderas con <span class="tt">-D</span>:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Entorno  </th><th class="markdownTableHeadNone"><span class="tt">FW_VERSION</span>  </th><th class="markdownTableHeadNone"><span class="tt">LED_MODE</span>  </th><th class="markdownTableHeadNone">Comportamiento  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">v100</span>  </td><td class="markdownTableBodyNone">1.0.0  </td><td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">Rojo fijo  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">v110</span>  </td><td class="markdownTableBodyNone">1.1.0  </td><td class="markdownTableBodyNone">1  </td><td class="markdownTableBodyNone">Amarillo parpadeando lento  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">v120</span>  </td><td class="markdownTableBodyNone">1.2.0  </td><td class="markdownTableBodyNone">2  </td><td class="markdownTableBodyNone">Rojo + amarillo fijos y detector de IA activo  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">v130</span>  </td><td class="markdownTableBodyNone">1.3.0  </td><td class="markdownTableBodyNone">1  </td><td class="markdownTableBodyNone">Igual que v110, más <span class="tt">SIMULAR_FALLO</span>: se reinicia a los 8 s (prueba de rollback)  </td></tr>
+</table>
+<p>Así se ve claramente qué versión corre cada vez que el LED cambia, sin necesitar pantalla.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md8"></a>
+Datos privados</h2>
+<p>La clave del Wi-Fi y la IP del servidor están en <span class="tt">src/secrets.h</span>, que <b>no se sube a GitHub</b> (está en <span class="tt">.gitignore</span>). El repositorio solo trae <span class="tt"><a class="el" href="secrets_8example_8h.html" title="Plantilla de datos privados (NO contiene claves reales).">secrets.example.h</a></span> como plantilla. La IP del PC puede cambiar cuando se reconecta el hotspot; debe ser igual en <span class="tt">secrets.h</span> y en <span class="tt"><a class="el" href="publicar_8py.html">servidor/publicar.py</a></span>, y al cambiarla hay que recompilar las versiones.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md9"></a>
+Formato de la telemetría</h2>
+<p>Cada muestra enviada por el ESP32 es un JSON así:</p>
+<div class="fragment"><div class="line">{&quot;fw&quot;:&quot;1.2.0&quot;,&quot;temp&quot;:64.44,&quot;luz&quot;:18,&quot;anomalia&quot;:false,&quot;rssi&quot;:-31}</div>
+</div><!-- fragment --><p>El campo <span class="tt">luz</span> contiene el valor del sensor táctil (el nombre se conservó por compatibilidad). El servidor lo guarda en <span class="tt">telemetria.csv</span> con las columnas <span class="tt">timestamp, fw, temp, tacto, anomalia, rssi</span>. </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="index.html">ESP32 OTA con IA</a></li>
+    <li class="footer">Generado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+  </ul>
+</div>
+</body>
+</html>

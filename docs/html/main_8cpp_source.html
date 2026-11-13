@@ -1,0 +1,389 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.14.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ESP32 OTA con IA: Archivo de código fuente src/main.cpp</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">ESP32 OTA con IA
+   </div>
+   <div id="projectbrief">OTA seguro, rollback por software y deteccion de anomalias con regresion logistica</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generado por Doxygen 1.14.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Buscar',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('main_8cpp_source.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Cargando...</div>
+<div class="SRStatus" id="Searching">Buscando...</div>
+<div class="SRStatus" id="NoMatches">Nada coincide</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="header">
+  <div class="headertitle"><div class="title">main.cpp</div></div>
+</div><!--header-->
+<div class="contents">
+<a href="main_8cpp.html">Ir a la documentación de este archivo.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &lt;Arduino.h&gt;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &lt;WiFi.h&gt;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &lt;HTTPClient.h&gt;</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &lt;Update.h&gt;</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &lt;ArduinoJson.h&gt;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &lt;Preferences.h&gt;</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &lt;mbedtls/sha256.h&gt;</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &lt;esp_ota_ops.h&gt;</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#include &quot;<a class="code" href="detector__logistico_8h.html">detector_logistico.h</a>&quot;</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#include &quot;secrets.h&quot;</span>   <span class="comment">// copia secrets.example.h -&gt; secrets.h y llena tus datos</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">#ifndef FW_VERSION</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="main_8cpp.html#a80bd8a83eaaf4466b44c61321c39b11b">   32</a></span><span class="preprocessor">#define FW_VERSION &quot;1.0.0&quot;</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">#ifndef LED_MODE</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="main_8cpp.html#a1ba2cabc13bdc2f34ec1f5ee7de35d04">   36</a></span><span class="preprocessor">#define LED_MODE 0</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno"><a class="line" href="main_8cpp.html#a586c86c64e7d30517aeee0fe47a25ae4">   39</a></span><span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_variable" href="main_8cpp.html#a586c86c64e7d30517aeee0fe47a25ae4">WIFI_SSID</a> = <a class="code hl_define" href="secrets_8example_8h.html#a5a16d6fe0a73503e7e258132a85b1f17">SECRET_WIFI_SSID</a>;   </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="main_8cpp.html#aa0d894a281cd4525d1dad48b1a7161ef">   40</a></span><span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code hl_variable" href="main_8cpp.html#aa0d894a281cd4525d1dad48b1a7161ef">WIFI_PASS</a> = <a class="code hl_define" href="secrets_8example_8h.html#a960d31aee980116b154543ceadc63db2">SECRET_WIFI_PASS</a>;   </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="main_8cpp.html#a847a5a1bb4fa20006e4f55e605f76e00">   41</a></span><span class="keyword">const</span> String <a class="code hl_variable" href="main_8cpp.html#a847a5a1bb4fa20006e4f55e605f76e00">SERVER</a>   = <a class="code hl_define" href="secrets_8example_8h.html#a7a44d8295a651c99a86fa2e87d856a51">SECRET_SERVER</a>;      </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="main_8cpp.html#a491fe6c0ef444ff857b796188eee174b">   43</a></span><span class="preprocessor">#define PIN_Y 5    </span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="main_8cpp.html#aef9efdab3ba730a39577a8efcb282fb8">   44</a></span><span class="preprocessor">#define PIN_R 19   </span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="comment">// Sensor tactil: T0 = GPIO 4 (cable suelto en ese pin).</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">   47</a></span>Preferences <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>;   </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a5ba8664eb478a4b94193fde5f61616c7">   50</a></span><span class="keyword">enum</span> <a class="code hl_enumeration" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49">Estado</a> { <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a50d1448013c6f17125caee18aa418af7">NORMAL</a>, <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a5ba8664eb478a4b94193fde5f61616c7">ANOMALIA</a>, <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a24be538ac0efaad87a15b02ddcff3692">FALLO_SENSOR</a> };</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="main_8cpp.html#a1152c324c35402f12adc06b09a2769cc">   51</a></span><a class="code hl_enumeration" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49">Estado</a> <a class="code hl_variable" href="main_8cpp.html#a1152c324c35402f12adc06b09a2769cc">estado</a> = <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a50d1448013c6f17125caee18aa418af7">NORMAL</a>;   </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="main_8cpp.html#a8bd84955c4515e162cdb0003b1c017d9">   54</a></span><a class="code hl_class" href="class_detector_logistico.html">DetectorLogistico</a> <a class="code hl_variable" href="main_8cpp.html#a8bd84955c4515e162cdb0003b1c017d9">detector</a>(1.0f, 4.0f);</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="comment">// ---------------------------------------------------------------- LEDs ----</span></div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span></div>
+<div class="foldopen" id="foldopen00063" data-start="{" data-end="}">
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="main_8cpp.html#afa070f83d7daf7f18464b34d45f98682">   63</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="main_8cpp.html#afa070f83d7daf7f18464b34d45f98682">setLeds</a>(<span class="keywordtype">bool</span> y, <span class="keywordtype">bool</span> r) {</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  digitalWrite(<a class="code hl_define" href="main_8cpp.html#a491fe6c0ef444ff857b796188eee174b">PIN_Y</a>, y); digitalWrite(<a class="code hl_define" href="main_8cpp.html#aef9efdab3ba730a39577a8efcb282fb8">PIN_R</a>, r);</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>}</div>
+</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span></div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="}">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="main_8cpp.html#afd0761020b2d358e2601ae87568c0237">   73</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="main_8cpp.html#afd0761020b2d358e2601ae87568c0237">actualizarLED</a>() {</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>  <span class="keyword">static</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> t = 0; <span class="keyword">static</span> <span class="keywordtype">bool</span> on = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="preprocessor">#if LED_MODE == 0</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  <a class="code hl_function" href="main_8cpp.html#afa070f83d7daf7f18464b34d45f98682">setLeds</a>(0, 1);                                                          <span class="comment">// v1.0.0: ROJO fijo</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="preprocessor">#elif LED_MODE == 1</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>  <span class="keywordflow">if</span> (millis() - t &gt;= 500) { t = millis(); on = !on; <a class="code hl_function" href="main_8cpp.html#afa070f83d7daf7f18464b34d45f98682">setLeds</a>(on, 0); }    <span class="comment">// v1.1.0: AMARILLO lento</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#else                                                                      </span><span class="comment">// v1.2.0</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="main_8cpp.html#a1152c324c35402f12adc06b09a2769cc">estado</a> == <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a50d1448013c6f17125caee18aa418af7">NORMAL</a>) <a class="code hl_function" href="main_8cpp.html#afa070f83d7daf7f18464b34d45f98682">setLeds</a>(1, 1);                                    <span class="comment">// ambos fijos = todo bien</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>  <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_variable" href="main_8cpp.html#a1152c324c35402f12adc06b09a2769cc">estado</a> == <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a5ba8664eb478a4b94193fde5f61616c7">ANOMALIA</a>) {</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordflow">if</span> (millis() - t &gt;= 150) { t = millis(); on = !on; <a class="code hl_function" href="main_8cpp.html#afa070f83d7daf7f18464b34d45f98682">setLeds</a>(on, 0); }  <span class="comment">// amarillo rapido = anomalia</span></div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>  } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keywordflow">if</span> (millis() - t &gt;= 150) { t = millis(); on = !on; <a class="code hl_function" href="main_8cpp.html#afa070f83d7daf7f18464b34d45f98682">setLeds</a>(0, on); }  <span class="comment">// rojo rapido = sensor caido</span></div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>  }</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>}</div>
+</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span><span class="comment">// ---------------------------------------------------- Rollback (software) ----</span></div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span></div>
+<div class="foldopen" id="foldopen00099" data-start="{" data-end="}">
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="main_8cpp.html#a9a1b95a2f9593234728995390149f34a">   99</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="main_8cpp.html#a9a1b95a2f9593234728995390149f34a">bootCheck</a>() {</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.begin(<span class="stringliteral">&quot;fw&quot;</span>, <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  <span class="keywordflow">if</span> (<a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.getBool(<span class="stringliteral">&quot;pending&quot;</span>, <span class="keyword">false</span>)) {</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    uint8_t t = <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.getUChar(<span class="stringliteral">&quot;tries&quot;</span>, 0) + 1;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.putUChar(<span class="stringliteral">&quot;tries&quot;</span>, t);</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    Serial.printf(<span class="stringliteral">&quot;Arranque sin validar %u/3\n&quot;</span>, t);</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">if</span> (t &gt;= 3) {                                    <span class="comment">// 3 arranques sin validar</span></div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>      Serial.println(<span class="stringliteral">&quot;ROLLBACK: se vuelve a la version anterior&quot;</span>);</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>      <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.putString(<span class="stringliteral">&quot;bad&quot;</span>, <a class="code hl_define" href="main_8cpp.html#a80bd8a83eaaf4466b44c61321c39b11b">FW_VERSION</a>);</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>      <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.putBool(<span class="stringliteral">&quot;pending&quot;</span>, <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>      <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.putUChar(<span class="stringliteral">&quot;tries&quot;</span>, 0);</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>      <span class="keyword">const</span> esp_partition_t* prev = esp_ota_get_next_update_partition(NULL);</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>      <span class="keywordflow">if</span> (prev &amp;&amp; esp_ota_set_boot_partition(prev) == ESP_OK) ESP.restart();</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    }</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>  }</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>}</div>
+</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span></div>
+<div class="foldopen" id="foldopen00117" data-start="{" data-end="}">
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno"><a class="line" href="main_8cpp.html#ac1b41681ced428a5cb0848b408b11c75">  117</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="main_8cpp.html#ac1b41681ced428a5cb0848b408b11c75">marcarValida</a>() {</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>  <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.putBool(<span class="stringliteral">&quot;pending&quot;</span>, <span class="keyword">false</span>);</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.putUChar(<span class="stringliteral">&quot;tries&quot;</span>, 0);</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>}</div>
+</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span><span class="comment">// ------------------------------------------------- OTA con SHA-256 ----</span></div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span></div>
+<div class="foldopen" id="foldopen00134" data-start="{" data-end="}">
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno"><a class="line" href="main_8cpp.html#a8de473ff68ee746f0034e221366a08f1">  134</a></span><span class="keywordtype">bool</span> <a class="code hl_function" href="main_8cpp.html#a8de473ff68ee746f0034e221366a08f1">aplicarOTA</a>(<span class="keyword">const</span> String&amp; url, String hashEsperado) {</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>  HTTPClient http;</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>  http.begin(url);</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>  <span class="keywordflow">if</span> (http.GET() != 200) { http.end(); <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>  <span class="keywordtype">int</span> total = http.getSize();</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>  <span class="keywordflow">if</span> (total &lt;= 0 || !Update.begin(total)) { http.end(); <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span> </div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>  mbedtls_sha256_context ctx;</div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>  mbedtls_sha256_init(&amp;ctx);</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>  mbedtls_sha256_starts(&amp;ctx, 0);</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span> </div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>  WiFiClient* s = http.getStreamPtr();</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>  uint8_t buf[1024];</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>  <span class="keywordtype">int</span> restante = total;</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> ultimo = millis();</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>  <span class="keywordtype">bool</span> alt = <span class="keyword">false</span>; <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> ta = 0;</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span> </div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>  <span class="keywordflow">while</span> (restante &gt; 0 &amp;&amp; http.connected()) {</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>    <span class="keywordflow">if</span> (millis() - ta &gt;= 150) { ta = millis(); alt = !alt; <a class="code hl_function" href="main_8cpp.html#afa070f83d7daf7f18464b34d45f98682">setLeds</a>(alt, !alt); }  <span class="comment">// descargando: se alternan</span></div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="keywordtype">size_t</span> disp = s-&gt;available();</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    <span class="keywordflow">if</span> (disp) {</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>      <span class="keywordtype">int</span> n = s-&gt;readBytes(buf, min(disp, <span class="keyword">sizeof</span>(buf)));</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>      <span class="keywordflow">if</span> (Update.write(buf, n) != (<span class="keywordtype">size_t</span>)n) <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>      mbedtls_sha256_update(&amp;ctx, buf, n);</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>      restante -= n;</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>      ultimo = millis();</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (millis() - ultimo &gt; 10000) <span class="keywordflow">break</span>;     <span class="comment">// corte de red</span></div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    delay(1);</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>  }</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>  http.end();</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>  <span class="keywordflow">if</span> (restante != 0) { Update.abort(); mbedtls_sha256_free(&amp;ctx); Serial.println(<span class="stringliteral">&quot;OTA incompleta&quot;</span>); <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>  uint8_t h[32];</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>  mbedtls_sha256_finish(&amp;ctx, h);</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>  mbedtls_sha256_free(&amp;ctx);</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>  String hex;</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>  <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; 32; i++) { <span class="keywordtype">char</span> c[3]; sprintf(c, <span class="stringliteral">&quot;%02x&quot;</span>, h[i]); hex += c; }</div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>  hashEsperado.toLowerCase();</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>  <span class="keywordflow">if</span> (hex != hashEsperado) { Update.abort(); Serial.println(<span class="stringliteral">&quot;HASH INVALIDO, se descarta&quot;</span>); <span class="keywordflow">return</span> <span class="keyword">false</span>; }</div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>  <span class="keywordflow">return</span> Update.end(<span class="keyword">true</span>);                           <span class="comment">// solo aqui se cambia la particion de arranque</span></div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>}</div>
+</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span></div>
+<div class="foldopen" id="foldopen00184" data-start="{" data-end="}">
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno"><a class="line" href="main_8cpp.html#ac819907982fbf11bf3c699454de5a027">  184</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="main_8cpp.html#ac819907982fbf11bf3c699454de5a027">checkOTA</a>() {</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>  HTTPClient http;</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>  http.begin(<a class="code hl_variable" href="main_8cpp.html#a847a5a1bb4fa20006e4f55e605f76e00">SERVER</a> + <span class="stringliteral">&quot;/version.json&quot;</span>);</div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>  <span class="keywordtype">int</span> code = http.GET();</div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span>  Serial.printf(<span class="stringliteral">&quot;version.json -&gt; HTTP %d\n&quot;</span>, code);</div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span>  <span class="keywordflow">if</span> (code != 200) { http.end(); <span class="keywordflow">return</span>; }</div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span>  JsonDocument doc;</div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span>  <span class="keywordflow">if</span> (deserializeJson(doc, http.getString())) { http.end(); <span class="keywordflow">return</span>; }</div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>  http.end();</div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span>  String nueva = doc[<span class="stringliteral">&quot;version&quot;</span>].as&lt;String&gt;();</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>  String bin   = doc[<span class="stringliteral">&quot;url&quot;</span>].as&lt;String&gt;();</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>  String hash  = doc[<span class="stringliteral">&quot;sha256&quot;</span>].as&lt;String&gt;();</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>  <span class="keywordflow">if</span> (nueva == <a class="code hl_define" href="main_8cpp.html#a80bd8a83eaaf4466b44c61321c39b11b">FW_VERSION</a> || nueva == <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.getString(<span class="stringliteral">&quot;bad&quot;</span>, <span class="stringliteral">&quot;&quot;</span>)) <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>  Serial.println(<span class="stringliteral">&quot;Actualizando a &quot;</span> + nueva);</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>  <span class="keywordflow">if</span> (<a class="code hl_function" href="main_8cpp.html#a8de473ff68ee746f0034e221366a08f1">aplicarOTA</a>(bin, hash)) {</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>    <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.putBool(<span class="stringliteral">&quot;pending&quot;</span>, <span class="keyword">true</span>);</div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>    <a class="code hl_variable" href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a>.putUChar(<span class="stringliteral">&quot;tries&quot;</span>, 0);</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    delay(200);</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    ESP.restart();                                   <span class="comment">// el OTA reinicia solo, no hace falta pulsar EN</span></div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>  }</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>}</div>
+</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span> </div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span><span class="comment">// ------------------------------------------------------ Utilidades ----</span></div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span></div>
+<div class="foldopen" id="foldopen00211" data-start="{" data-end="}">
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno"><a class="line" href="main_8cpp.html#a606e98295d8090b30e28eda04107da12">  211</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="main_8cpp.html#a606e98295d8090b30e28eda04107da12">conectarWiFi</a>() {</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>  <span class="keywordflow">if</span> (WiFi.status() == WL_CONNECTED) <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>  WiFi.begin(<a class="code hl_variable" href="main_8cpp.html#a586c86c64e7d30517aeee0fe47a25ae4">WIFI_SSID</a>, <a class="code hl_variable" href="main_8cpp.html#aa0d894a281cd4525d1dad48b1a7161ef">WIFI_PASS</a>);</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> t = millis();</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>  <span class="keywordflow">while</span> (WiFi.status() != WL_CONNECTED &amp;&amp; millis() - t &lt; 15000) delay(200);</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>}</div>
+</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span></div>
+<div class="foldopen" id="foldopen00224" data-start="{" data-end="}">
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno"><a class="line" href="main_8cpp.html#ace44027e67c5b646c2fabbfe8f202ff3">  224</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="main_8cpp.html#ace44027e67c5b646c2fabbfe8f202ff3">enviar</a>(<span class="keywordtype">float</span> t, <span class="keywordtype">int</span> tacto, <span class="keywordtype">bool</span> anom) {</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>  <span class="keywordflow">if</span> (WiFi.status() != WL_CONNECTED) <span class="keywordflow">return</span>;</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>  HTTPClient http;</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>  http.begin(<a class="code hl_variable" href="main_8cpp.html#a847a5a1bb4fa20006e4f55e605f76e00">SERVER</a> + <span class="stringliteral">&quot;/telemetry&quot;</span>);</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>  http.addHeader(<span class="stringliteral">&quot;Content-Type&quot;</span>, <span class="stringliteral">&quot;application/json&quot;</span>);</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>  String body = String(<span class="stringliteral">&quot;{\&quot;fw\&quot;:\&quot;&quot;</span>) + <a class="code hl_define" href="main_8cpp.html#a80bd8a83eaaf4466b44c61321c39b11b">FW_VERSION</a> + <span class="stringliteral">&quot;\&quot;,\&quot;temp\&quot;:&quot;</span> + String(t) +</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                <span class="stringliteral">&quot;,\&quot;luz\&quot;:&quot;</span> + tacto + <span class="stringliteral">&quot;,\&quot;anomalia\&quot;:&quot;</span> + (anom ? <span class="stringliteral">&quot;true&quot;</span> : <span class="stringliteral">&quot;false&quot;</span>) +</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                <span class="stringliteral">&quot;,\&quot;rssi\&quot;:&quot;</span> + WiFi.RSSI() + <span class="stringliteral">&quot;}&quot;</span>;</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>  http.POST(body);</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>  http.end();</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>}</div>
+</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="comment">// ------------------------------------------------ Programa principal ----</span></div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span></div>
+<div class="foldopen" id="foldopen00239" data-start="{" data-end="}">
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno"><a class="line" href="main_8cpp.html#a4fc01d736fe50cf5b977f755b675f11d">  239</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="main_8cpp.html#a4fc01d736fe50cf5b977f755b675f11d">setup</a>() {</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>  Serial.begin(115200);</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>  pinMode(<a class="code hl_define" href="main_8cpp.html#a491fe6c0ef444ff857b796188eee174b">PIN_Y</a>, OUTPUT); pinMode(<a class="code hl_define" href="main_8cpp.html#aef9efdab3ba730a39577a8efcb282fb8">PIN_R</a>, OUTPUT);</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>  <a class="code hl_function" href="main_8cpp.html#a9a1b95a2f9593234728995390149f34a">bootCheck</a>();</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>  Serial.println(<span class="stringliteral">&quot;FW &quot;</span> <a class="code hl_define" href="main_8cpp.html#a80bd8a83eaaf4466b44c61321c39b11b">FW_VERSION</a>);</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>  <a class="code hl_function" href="main_8cpp.html#a606e98295d8090b30e28eda04107da12">conectarWiFi</a>();</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>  Serial.print(<span class="stringliteral">&quot;IP ESP32: &quot;</span>); Serial.println(WiFi.localIP());</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>  Serial.print(<span class="stringliteral">&quot;Gateway:  &quot;</span>); Serial.println(WiFi.gatewayIP());</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>  Serial.print(<span class="stringliteral">&quot;SERVER:   &quot;</span>); Serial.println(<a class="code hl_variable" href="main_8cpp.html#a847a5a1bb4fa20006e4f55e605f76e00">SERVER</a>);</div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>}</div>
+</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno"><a class="line" href="main_8cpp.html#aab83e4706777c0d73d06442cda9b7fd9">  250</a></span><span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <a class="code hl_variable" href="main_8cpp.html#aab83e4706777c0d73d06442cda9b7fd9">tMuestra</a> = 0;   </div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno"><a class="line" href="main_8cpp.html#a91466e090898a089b9bd704bc90b1c53">  251</a></span><span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <a class="code hl_variable" href="main_8cpp.html#a91466e090898a089b9bd704bc90b1c53">tOTA</a> = 0;       </div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno"><a class="line" href="main_8cpp.html#a6a3e0324928c499926ccf9a8223301d7">  252</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="main_8cpp.html#a6a3e0324928c499926ccf9a8223301d7">contEnvio</a> = 0;            </div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno"><a class="line" href="main_8cpp.html#a21b7230211ddbda0f77b16873e067239">  253</a></span><span class="keywordtype">int</span> <a class="code hl_variable" href="main_8cpp.html#a21b7230211ddbda0f77b16873e067239">pegado</a> = 0;               </div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno"><a class="line" href="main_8cpp.html#a4c02cb885c6adb49967d525a161a1dfb">  254</a></span><span class="keywordtype">bool</span> <a class="code hl_variable" href="main_8cpp.html#a4c02cb885c6adb49967d525a161a1dfb">validada</a> = <span class="keyword">false</span>;        </div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span></div>
+<div class="foldopen" id="foldopen00264" data-start="{" data-end="}">
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno"><a class="line" href="main_8cpp.html#afe461d27b9c48d5921c00d521181f12f">  264</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="main_8cpp.html#afe461d27b9c48d5921c00d521181f12f">loop</a>() {</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>  <a class="code hl_function" href="main_8cpp.html#afd0761020b2d358e2601ae87568c0237">actualizarLED</a>();</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span> </div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span><span class="preprocessor">#ifdef SIMULAR_FALLO</span></div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>  <span class="keywordflow">if</span> (millis() &gt; 8000) ESP.restart();                <span class="comment">// v1.3.0: se reinicia sin validarse nunca</span></div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span> </div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> intervalo = (<a class="code hl_variable" href="main_8cpp.html#a1152c324c35402f12adc06b09a2769cc">estado</a> == <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a5ba8664eb478a4b94193fde5f61616c7">ANOMALIA</a>) ? 1000 : 5000;</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span> </div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>  <span class="keywordflow">if</span> (millis() - <a class="code hl_variable" href="main_8cpp.html#aab83e4706777c0d73d06442cda9b7fd9">tMuestra</a> &gt;= intervalo) {</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>    <a class="code hl_variable" href="main_8cpp.html#aab83e4706777c0d73d06442cda9b7fd9">tMuestra</a> = millis();</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>    <span class="keywordtype">float</span> t = temperatureRead();       <span class="comment">// grados C del chip</span></div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>    <span class="keywordtype">int</span> tacto = touchRead(T0);         <span class="comment">// GPIO 4</span></div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>    <span class="comment">// Sensor caido: cable en corto a GND (lectura ~0) varias veces seguidas</span></div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    <a class="code hl_variable" href="main_8cpp.html#a21b7230211ddbda0f77b16873e067239">pegado</a> = (tacto &lt;= 2) ? <a class="code hl_variable" href="main_8cpp.html#a21b7230211ddbda0f77b16873e067239">pegado</a> + 1 : 0;</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span> </div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>    <span class="keywordflow">if</span> (<a class="code hl_variable" href="main_8cpp.html#a21b7230211ddbda0f77b16873e067239">pegado</a> &gt;= 6) {</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>      <a class="code hl_variable" href="main_8cpp.html#a1152c324c35402f12adc06b09a2769cc">estado</a> = <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a24be538ac0efaad87a15b02ddcff3692">FALLO_SENSOR</a>;</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>      <span class="keywordtype">bool</span> anom = <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span><span class="preprocessor">#if LED_MODE == 2</span></div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>      anom = <a class="code hl_variable" href="main_8cpp.html#a8bd84955c4515e162cdb0003b1c017d9">detector</a>.evaluar(t, (<span class="keywordtype">float</span>)tacto);      <span class="comment">// regresion logistica (solo en v1.2.0)</span></div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>      <a class="code hl_variable" href="main_8cpp.html#a1152c324c35402f12adc06b09a2769cc">estado</a> = anom ? <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a5ba8664eb478a4b94193fde5f61616c7">ANOMALIA</a> : <a class="code hl_enumvalue" href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a50d1448013c6f17125caee18aa418af7">NORMAL</a>;</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span><span class="preprocessor">#ifndef SIMULAR_FALLO</span></div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>      <span class="keywordflow">if</span> (!<a class="code hl_variable" href="main_8cpp.html#a4c02cb885c6adb49967d525a161a1dfb">validada</a> &amp;&amp; WiFi.status() == WL_CONNECTED) { <a class="code hl_function" href="main_8cpp.html#ac1b41681ced428a5cb0848b408b11c75">marcarValida</a>(); <a class="code hl_variable" href="main_8cpp.html#a4c02cb885c6adb49967d525a161a1dfb">validada</a> = <span class="keyword">true</span>; }</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>      Serial.printf(<span class="stringliteral">&quot;T=%.1f tacto=%d anom=%d p=%.2f\n&quot;</span>, t, tacto, anom, <a class="code hl_variable" href="main_8cpp.html#a8bd84955c4515e162cdb0003b1c017d9">detector</a>.probabilidad());</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>      <span class="comment">// Senal debil -&gt; reporta 1 de cada 3 muestras</span></div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>      <span class="keywordflow">if</span> (WiFi.RSSI() &gt; -80 || ++<a class="code hl_variable" href="main_8cpp.html#a6a3e0324928c499926ccf9a8223301d7">contEnvio</a> % 3 == 0) <a class="code hl_function" href="main_8cpp.html#ace44027e67c5b646c2fabbfe8f202ff3">enviar</a>(t, tacto, anom);</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>    }</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>  }</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span> </div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>  <span class="comment">// Consulta OTA: cada 30 s (60 s si la senal es debil)</span></div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>  <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> perOTA = (WiFi.RSSI() &lt; -80) ? 60000 : 30000;</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>  <span class="keywordflow">if</span> (millis() - <a class="code hl_variable" href="main_8cpp.html#a91466e090898a089b9bd704bc90b1c53">tOTA</a> &gt;= perOTA) { <a class="code hl_variable" href="main_8cpp.html#a91466e090898a089b9bd704bc90b1c53">tOTA</a> = millis(); <a class="code hl_function" href="main_8cpp.html#a606e98295d8090b30e28eda04107da12">conectarWiFi</a>(); <a class="code hl_function" href="main_8cpp.html#ac819907982fbf11bf3c699454de5a027">checkOTA</a>(); }</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>}</div>
+</div>
+<div class="ttc" id="aclass_detector_logistico_html"><div class="ttname"><a href="class_detector_logistico.html">DetectorLogistico</a></div><div class="ttdoc">Clasifica cada muestra (temperatura, tacto) como normal o anomalia.</div><div class="ttdef"><b>Definition</b> <a href="detector__logistico_8h_source.html#l00028">detector_logistico.h:28</a></div></div>
+<div class="ttc" id="adetector__logistico_8h_html"><div class="ttname"><a href="detector__logistico_8h.html">detector_logistico.h</a></div><div class="ttdoc">Detector de anomalias con regresion logistica para el ESP32.</div></div>
+<div class="ttc" id="amain_8cpp_html_a1152c324c35402f12adc06b09a2769cc"><div class="ttname"><a href="main_8cpp.html#a1152c324c35402f12adc06b09a2769cc">estado</a></div><div class="ttdeci">Estado estado</div><div class="ttdoc">Estado actual.</div><div class="ttdef"><b>Definition</b> <a href="#l00051">main.cpp:51</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a21b7230211ddbda0f77b16873e067239"><div class="ttname"><a href="main_8cpp.html#a21b7230211ddbda0f77b16873e067239">pegado</a></div><div class="ttdeci">int pegado</div><div class="ttdoc">Lecturas seguidas con tacto &lt;= 2 (sensor caido).</div><div class="ttdef"><b>Definition</b> <a href="#l00253">main.cpp:253</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a491fe6c0ef444ff857b796188eee174b"><div class="ttname"><a href="main_8cpp.html#a491fe6c0ef444ff857b796188eee174b">PIN_Y</a></div><div class="ttdeci">#define PIN_Y</div><div class="ttdoc">LED amarillo (con resistencia a GND).</div><div class="ttdef"><b>Definition</b> <a href="#l00043">main.cpp:43</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a4c02cb885c6adb49967d525a161a1dfb"><div class="ttname"><a href="main_8cpp.html#a4c02cb885c6adb49967d525a161a1dfb">validada</a></div><div class="ttdeci">bool validada</div><div class="ttdoc">Ya se llamo a marcarValida() en este arranque.</div><div class="ttdef"><b>Definition</b> <a href="#l00254">main.cpp:254</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a4fc01d736fe50cf5b977f755b675f11d"><div class="ttname"><a href="main_8cpp.html#a4fc01d736fe50cf5b977f755b675f11d">setup</a></div><div class="ttdeci">void setup()</div><div class="ttdoc">Se ejecuta una vez al encender: pines, rollback y Wi-Fi.</div><div class="ttdef"><b>Definition</b> <a href="#l00239">main.cpp:239</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a586c86c64e7d30517aeee0fe47a25ae4"><div class="ttname"><a href="main_8cpp.html#a586c86c64e7d30517aeee0fe47a25ae4">WIFI_SSID</a></div><div class="ttdeci">const char * WIFI_SSID</div><div class="ttdoc">Nombre de la red Wi-Fi.</div><div class="ttdef"><b>Definition</b> <a href="#l00039">main.cpp:39</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a606e98295d8090b30e28eda04107da12"><div class="ttname"><a href="main_8cpp.html#a606e98295d8090b30e28eda04107da12">conectarWiFi</a></div><div class="ttdeci">void conectarWiFi()</div><div class="ttdoc">Conecta al Wi-Fi si no lo esta (espera maximo 15 s).</div><div class="ttdef"><b>Definition</b> <a href="#l00211">main.cpp:211</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a6a3e0324928c499926ccf9a8223301d7"><div class="ttname"><a href="main_8cpp.html#a6a3e0324928c499926ccf9a8223301d7">contEnvio</a></div><div class="ttdeci">int contEnvio</div><div class="ttdoc">Contador para enviar 1 de cada 3 con senal debil.</div><div class="ttdef"><b>Definition</b> <a href="#l00252">main.cpp:252</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a77f70a9d88156f5f7dbdd99bfaaee64e"><div class="ttname"><a href="main_8cpp.html#a77f70a9d88156f5f7dbdd99bfaaee64e">prefs</a></div><div class="ttdeci">Preferences prefs</div><div class="ttdoc">Memoria no volatil (NVS): guarda &quot;pending&quot;, &quot;tries&quot; y &quot;bad&quot;.</div><div class="ttdef"><b>Definition</b> <a href="#l00047">main.cpp:47</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a80bd8a83eaaf4466b44c61321c39b11b"><div class="ttname"><a href="main_8cpp.html#a80bd8a83eaaf4466b44c61321c39b11b">FW_VERSION</a></div><div class="ttdeci">#define FW_VERSION</div><div class="ttdef"><b>Definition</b> <a href="#l00032">main.cpp:32</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a847a5a1bb4fa20006e4f55e605f76e00"><div class="ttname"><a href="main_8cpp.html#a847a5a1bb4fa20006e4f55e605f76e00">SERVER</a></div><div class="ttdeci">const String SERVER</div><div class="ttdoc">URL del servidor FastAPI en el PC.</div><div class="ttdef"><b>Definition</b> <a href="#l00041">main.cpp:41</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a8bd84955c4515e162cdb0003b1c017d9"><div class="ttname"><a href="main_8cpp.html#a8bd84955c4515e162cdb0003b1c017d9">detector</a></div><div class="ttdeci">DetectorLogistico detector(1.0f, 4.0f)</div></div>
+<div class="ttc" id="amain_8cpp_html_a8de473ff68ee746f0034e221366a08f1"><div class="ttname"><a href="main_8cpp.html#a8de473ff68ee746f0034e221366a08f1">aplicarOTA</a></div><div class="ttdeci">bool aplicarOTA(const String &amp;url, String hashEsperado)</div><div class="ttdoc">Descarga un .bin, calcula su SHA-256 mientras llega y lo instala solo si el hash coincide.</div><div class="ttdef"><b>Definition</b> <a href="#l00134">main.cpp:134</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a91466e090898a089b9bd704bc90b1c53"><div class="ttname"><a href="main_8cpp.html#a91466e090898a089b9bd704bc90b1c53">tOTA</a></div><div class="ttdeci">unsigned long tOTA</div><div class="ttdoc">Instante de la ultima consulta OTA (ms).</div><div class="ttdef"><b>Definition</b> <a href="#l00251">main.cpp:251</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a9a1b95a2f9593234728995390149f34a"><div class="ttname"><a href="main_8cpp.html#a9a1b95a2f9593234728995390149f34a">bootCheck</a></div><div class="ttdeci">void bootCheck()</div><div class="ttdoc">Cuenta los arranques de un firmware recien actualizado.</div><div class="ttdef"><b>Definition</b> <a href="#l00099">main.cpp:99</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a9d4630b1e0c310d9b8c562abd8114c49"><div class="ttname"><a href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49">Estado</a></div><div class="ttdeci">Estado</div><div class="ttdoc">Estados del dispositivo que decide la IA.</div><div class="ttdef"><b>Definition</b> <a href="#l00050">main.cpp:50</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a9d4630b1e0c310d9b8c562abd8114c49a24be538ac0efaad87a15b02ddcff3692"><div class="ttname"><a href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a24be538ac0efaad87a15b02ddcff3692">FALLO_SENSOR</a></div><div class="ttdeci">@ FALLO_SENSOR</div><div class="ttdef"><b>Definition</b> <a href="#l00050">main.cpp:50</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a9d4630b1e0c310d9b8c562abd8114c49a50d1448013c6f17125caee18aa418af7"><div class="ttname"><a href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a50d1448013c6f17125caee18aa418af7">NORMAL</a></div><div class="ttdeci">@ NORMAL</div><div class="ttdef"><b>Definition</b> <a href="#l00050">main.cpp:50</a></div></div>
+<div class="ttc" id="amain_8cpp_html_a9d4630b1e0c310d9b8c562abd8114c49a5ba8664eb478a4b94193fde5f61616c7"><div class="ttname"><a href="main_8cpp.html#a9d4630b1e0c310d9b8c562abd8114c49a5ba8664eb478a4b94193fde5f61616c7">ANOMALIA</a></div><div class="ttdeci">@ ANOMALIA</div><div class="ttdef"><b>Definition</b> <a href="#l00050">main.cpp:50</a></div></div>
+<div class="ttc" id="amain_8cpp_html_aa0d894a281cd4525d1dad48b1a7161ef"><div class="ttname"><a href="main_8cpp.html#aa0d894a281cd4525d1dad48b1a7161ef">WIFI_PASS</a></div><div class="ttdeci">const char * WIFI_PASS</div><div class="ttdoc">Clave de la red Wi-Fi.</div><div class="ttdef"><b>Definition</b> <a href="#l00040">main.cpp:40</a></div></div>
+<div class="ttc" id="amain_8cpp_html_aab83e4706777c0d73d06442cda9b7fd9"><div class="ttname"><a href="main_8cpp.html#aab83e4706777c0d73d06442cda9b7fd9">tMuestra</a></div><div class="ttdeci">unsigned long tMuestra</div><div class="ttdoc">Instante de la ultima muestra (ms).</div><div class="ttdef"><b>Definition</b> <a href="#l00250">main.cpp:250</a></div></div>
+<div class="ttc" id="amain_8cpp_html_ac1b41681ced428a5cb0848b408b11c75"><div class="ttname"><a href="main_8cpp.html#ac1b41681ced428a5cb0848b408b11c75">marcarValida</a></div><div class="ttdeci">void marcarValida()</div><div class="ttdoc">Confirma que el firmware nuevo funciona (cancela el rollback).</div><div class="ttdef"><b>Definition</b> <a href="#l00117">main.cpp:117</a></div></div>
+<div class="ttc" id="amain_8cpp_html_ac819907982fbf11bf3c699454de5a027"><div class="ttname"><a href="main_8cpp.html#ac819907982fbf11bf3c699454de5a027">checkOTA</a></div><div class="ttdeci">void checkOTA()</div><div class="ttdoc">Pregunta al servidor cual es la ultima version y la instala si es nueva.</div><div class="ttdef"><b>Definition</b> <a href="#l00184">main.cpp:184</a></div></div>
+<div class="ttc" id="amain_8cpp_html_ace44027e67c5b646c2fabbfe8f202ff3"><div class="ttname"><a href="main_8cpp.html#ace44027e67c5b646c2fabbfe8f202ff3">enviar</a></div><div class="ttdeci">void enviar(float t, int tacto, bool anom)</div><div class="ttdoc">Envia una muestra al servidor (POST /telemetry, formato JSON).</div><div class="ttdef"><b>Definition</b> <a href="#l00224">main.cpp:224</a></div></div>
+<div class="ttc" id="amain_8cpp_html_aef9efdab3ba730a39577a8efcb282fb8"><div class="ttname"><a href="main_8cpp.html#aef9efdab3ba730a39577a8efcb282fb8">PIN_R</a></div><div class="ttdeci">#define PIN_R</div><div class="ttdoc">LED rojo (con resistencia a GND).</div><div class="ttdef"><b>Definition</b> <a href="#l00044">main.cpp:44</a></div></div>
+<div class="ttc" id="amain_8cpp_html_afa070f83d7daf7f18464b34d45f98682"><div class="ttname"><a href="main_8cpp.html#afa070f83d7daf7f18464b34d45f98682">setLeds</a></div><div class="ttdeci">void setLeds(bool y, bool r)</div><div class="ttdoc">Enciende o apaga los dos LEDs.</div><div class="ttdef"><b>Definition</b> <a href="#l00063">main.cpp:63</a></div></div>
+<div class="ttc" id="amain_8cpp_html_afd0761020b2d358e2601ae87568c0237"><div class="ttname"><a href="main_8cpp.html#afd0761020b2d358e2601ae87568c0237">actualizarLED</a></div><div class="ttdeci">void actualizarLED()</div><div class="ttdoc">Dibuja el patron de LED de la version y del estado actual.</div><div class="ttdef"><b>Definition</b> <a href="#l00073">main.cpp:73</a></div></div>
+<div class="ttc" id="amain_8cpp_html_afe461d27b9c48d5921c00d521181f12f"><div class="ttname"><a href="main_8cpp.html#afe461d27b9c48d5921c00d521181f12f">loop</a></div><div class="ttdeci">void loop()</div><div class="ttdoc">Ciclo infinito: LEDs, muestreo con IA, telemetria y consulta OTA.</div><div class="ttdef"><b>Definition</b> <a href="#l00264">main.cpp:264</a></div></div>
+<div class="ttc" id="asecrets_8example_8h_html_a5a16d6fe0a73503e7e258132a85b1f17"><div class="ttname"><a href="secrets_8example_8h.html#a5a16d6fe0a73503e7e258132a85b1f17">SECRET_WIFI_SSID</a></div><div class="ttdeci">#define SECRET_WIFI_SSID</div><div class="ttdef"><b>Definition</b> <a href="secrets_8example_8h_source.html#l00012">secrets.example.h:12</a></div></div>
+<div class="ttc" id="asecrets_8example_8h_html_a7a44d8295a651c99a86fa2e87d856a51"><div class="ttname"><a href="secrets_8example_8h.html#a7a44d8295a651c99a86fa2e87d856a51">SECRET_SERVER</a></div><div class="ttdeci">#define SECRET_SERVER</div><div class="ttdef"><b>Definition</b> <a href="secrets_8example_8h_source.html#l00015">secrets.example.h:15</a></div></div>
+<div class="ttc" id="asecrets_8example_8h_html_a960d31aee980116b154543ceadc63db2"><div class="ttname"><a href="secrets_8example_8h.html#a960d31aee980116b154543ceadc63db2">SECRET_WIFI_PASS</a></div><div class="ttdeci">#define SECRET_WIFI_PASS</div><div class="ttdef"><b>Definition</b> <a href="secrets_8example_8h_source.html#l00013">secrets.example.h:13</a></div></div>
+</div><!-- fragment --></div><!-- contents -->
+</div><!-- doc-content -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a href="main_8cpp.html">main.cpp</a></li>
+    <li class="footer">Generado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+  </ul>
+</div>
+</body>
+</html>

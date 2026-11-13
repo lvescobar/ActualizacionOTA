@@ -1,0 +1,245 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.14.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ESP32 OTA con IA: Modelo de IA: regresión logística</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">ESP32 OTA con IA
+   </div>
+   <div id="projectbrief">OTA seguro, rollback por software y deteccion de anomalias con regresion logistica</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generado por Doxygen 1.14.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Buscar',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('ia.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Cargando...</div>
+<div class="SRStatus" id="Searching">Buscando...</div>
+<div class="SRStatus" id="NoMatches">Nada coincide</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Modelo de IA: regresión logística </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p>Esta página explica qué hace la inteligencia artificial del ESP32 (versión 1.2.0), cómo se construyó y por qué decide lo que decide. El código está en <span class="tt"><a class="el" href="detector__logistico_8h.html" title="Detector de anomalias con regresion logistica para el ESP32.">src/detector_logistico.h</a></span> (clase <span class="tt"><a class="el" href="class_detector_logistico.html" title="Clasifica cada muestra (temperatura, tacto) como normal o anomalia.">DetectorLogistico</a></span>) y el entrenamiento en <span class="tt"><a class="el" href="entrenar__logistica_8py.html">entrenamiento/entrenar_logistica.py</a></span>.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md10"></a>
+1. El problema</h2>
+<p>El ESP32 toma dos medidas cada 5 s:</p>
+<ul>
+<li><b>Temperatura interna del chip</b> (<span class="tt">temperatureRead()</span>, en °C).</li>
+<li><b>Valor del sensor táctil</b> (<span class="tt">touchRead(T0)</span>, GPIO 4, con un cable suelto como antena). Sin tocar da valores de unos 69-71; al tocar el cable baja mucho (por ejemplo 0 a 18).</li>
+</ul>
+<p>Se quiere decidir, para <b>cada muestra</b>, si es <b>normal (0)</b> o <b>anomalía (1)</b>. Es un problema de <b>clasificación binaria</b>, y para eso se usa regresión logística.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md11"></a>
+2. Por qué regresión logística</h2>
+<ul>
+<li>Es un modelo <b>supervisado</b>: aprende de ejemplos con etiqueta (0 = normal, 1 = anomalía).</li>
+<li>Entrega una <b>probabilidad</b> (de 0 a 1) en lugar de solo "sí o no". Esa probabilidad se ve en el monitor como <span class="tt">p=...</span>.</li>
+<li>Es muy liviano: para predecir solo hace sumas, multiplicaciones y una exponencial. Cabe sin problema en un ESP32 y no necesita librerías de machine learning.</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md12"></a>
+3. Cómo funciona, paso a paso</h2>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md13"></a>
+Paso 1: Calibración (primeras 30 muestras)</h3>
+<p>Cada ESP32 y cada entorno son distintos (otra temperatura, otro cable), así que el equipo <b>aprende lo normal por sí mismo</b> al arrancar. Con las primeras 30 muestras (unos 2.5 minutos) calcula, para cada variable, la <b>media</b> y la <b>desviación estándar</b> con el algoritmo de Welford (calcula ambas sin guardar las 30 muestras).</p>
+<p>Durante la calibración el detector siempre responde "normal" y <span class="tt">p=0.00</span>.</p>
+<blockquote class="doxtable">
+<p><b>Importante:</b> durante esos 2.5 minutos no hay que tocar el cable. Si se toca, el modelo "aprende" que ese valor es normal y deja de detectarlo. Si ocurre, basta reiniciar con el botón EN. </p>
+</blockquote>
+<p>La desviación estándar tiene un <b>piso</b> (<span class="tt">stdMin</span>): 1.0 °C para la temperatura y 4.0 para el tacto. Evita dividir por casi cero cuando el sensor casi no varía.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md14"></a>
+Paso 2: Normalizar (puntaje z)</h3>
+<p>Cada medida nueva se convierte a "cuántas desviaciones estándar se aleja de lo normal":</p>
+<div class="fragment"><div class="line">z = (x - media) / desviación</div>
+</div><!-- fragment --><p>Así la temperatura (en °C) y el tacto (en unidades del sensor) quedan en la misma escala y pesan lo mismo.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md15"></a>
+Paso 3: Características</h3>
+<p>Las entradas del modelo son los valores absolutos <span class="tt">|z|</span> de cada variable, limitados a 10 para que un valor extremo no sature el modelo:</p>
+<div class="fragment"><div class="line">f1 = min(|z_temperatura|, 10)</div>
+<div class="line">f2 = min(|z_tacto|,       10)</div>
+</div><!-- fragment --><p>Se usa el valor absoluto porque da igual que la medida suba o baje: lo que importa es qué tan lejos está de lo normal.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md16"></a>
+Paso 4: Regresión logística</h3>
+<div class="fragment"><div class="line">s = SESGO + W_TEMP * f1 + W_TACTO * f2</div>
+<div class="line">p = 1 / (1 + e^(-s))          (función sigmoide)</div>
+<div class="line">anomalía = (p &gt; 0.5)</div>
+</div><!-- fragment --><p>La sigmoide convierte cualquier número <span class="tt">s</span> en una probabilidad entre 0 y 1. Con los pesos entrenados:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Parámetro  </th><th class="markdownTableHeadNone">Valor  </th><th class="markdownTableHeadNone">Significado  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">W_TEMP</span>  </td><td class="markdownTableBodyNone">1.6997  </td><td class="markdownTableBodyNone">Cuánto aumenta <span class="tt">s</span> por cada desviación de temperatura.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">W_TACTO</span>  </td><td class="markdownTableBodyNone">1.6760  </td><td class="markdownTableBodyNone">Cuánto aumenta <span class="tt">s</span> por cada desviación de tacto.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">SESGO</span>  </td><td class="markdownTableBodyNone">-7.3083  </td><td class="markdownTableBodyNone">Valor base: hace que lo normal dé probabilidad casi cero.  </td></tr>
+</table>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md17"></a>
+Paso 5: Qué probabilidad se obtiene</h3>
+<p>Para una sola variable alejada <span class="tt">z</span> desviaciones (la otra normal):</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Distancia en desviaciones (z)  </th><th class="markdownTableHeadNone">Probabilidad p  </th><th class="markdownTableHeadNone">Decisión  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">0  </td><td class="markdownTableBodyNone">0.001  </td><td class="markdownTableBodyNone">normal  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">2  </td><td class="markdownTableBodyNone">0.019  </td><td class="markdownTableBodyNone">normal  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">3  </td><td class="markdownTableBodyNone">0.093  </td><td class="markdownTableBodyNone">normal  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">4  </td><td class="markdownTableBodyNone">0.353  </td><td class="markdownTableBodyNone">normal  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><b>4.36</b>  </td><td class="markdownTableBodyNone"><b>0.500</b>  </td><td class="markdownTableBodyNone"><b>frontera</b>  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">5  </td><td class="markdownTableBodyNone">0.745  </td><td class="markdownTableBodyNone">anomalía  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">6  </td><td class="markdownTableBodyNone">0.940  </td><td class="markdownTableBodyNone">anomalía  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">10 o más  </td><td class="markdownTableBodyNone">1.000  </td><td class="markdownTableBodyNone">anomalía  </td></tr>
+</table>
+<p>La frontera cae en unas <b>4.3 desviaciones</b>. Con la calibración típica del proyecto (tacto cercano a 69 y piso de desviación 4.0), eso equivale a:</p>
+<ul>
+<li><b>Tacto:</b> anomalía cuando baja de unos <b>52</b> (o sube de unos 86).</li>
+<li><b>Temperatura:</b> anomalía cuando se aleja unos <b>4.3 °C</b> de su media (piso de 1.0 °C).</li>
+</ul>
+<p>Esto coincide con lo observado en las pruebas: tacto 57-69 da <span class="tt">p</span> entre 0.00 y 0.08 (normal) y tacto 0-18 da <span class="tt">p=1.00</span> (anomalía).</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md18"></a>
+Paso 6: Adaptación a la deriva lenta</h3>
+<p>La temperatura del chip sube al calentarse. Para no dar falsas alarmas, cada muestra <b>normal</b> mueve la media un 5 % hacia el valor nuevo. Las muestras <b>anómalas no actualizan la media</b>: así, tocar el cable muchas veces no hace que lo anormal pase a "normal".</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md19"></a>
+4. Cómo se entrenó</h2>
+<p>La regresión logística necesita ejemplos con etiqueta, y el ESP32 no los tiene. Por eso el entrenamiento se hace <b>una vez en el PC</b> con <span class="tt"><a class="el" href="entrenar__logistica_8py.html">entrenamiento/entrenar_logistica.py</a></span>:</p>
+<ol type="1">
+<li><b>Genera los datos en espacio z</b> (4000 ejemplos de cada clase):<ul>
+<li><em>Normales (etiqueta 0):</em> valores <span class="tt">|z|</span> de una distribución normal estándar, para ambas variables.</li>
+<li><em>Anomalías (etiqueta 1):</em> una de las dos variables se aleja entre 3 y 40 desviaciones y la otra queda normal (representa un toque del cable o un calentamiento fuerte).</li>
+</ul>
+</li>
+<li><b>Limita</b> las características a 10, igual que el ESP32.</li>
+<li><b>Entrena</b> con descenso de gradiente (tasa 0.1, 5000 iteraciones) y regularización L2 (1e-3, evita pesos exagerados). El descenso de gradiente ajusta los pesos poco a poco para reducir el error entre <span class="tt">p</span> y la etiqueta real.</li>
+<li><b>Evalúa</b>: 99 % de exactitud en los datos de entrenamiento. El 1 % de error está en la zona de solapamiento (entre 3 y 4.3 desviaciones), donde una medida "muy rara" y una "anomalía suave" se parecen.</li>
+<li><b>Imprime los pesos</b> (<span class="tt">W_TEMP</span>, <span class="tt">W_TACTO</span>, <span class="tt">SESGO</span>), que se copian a <span class="tt"><a class="el" href="detector__logistico_8h.html" title="Detector de anomalias con regresion logistica para el ESP32.">detector_logistico.h</a></span>.</li>
+</ol>
+<p>Para reentrenar: <span class="tt">python <a class="el" href="entrenar__logistica_8py.html">entrenar_logistica.py</a></span> (requiere <span class="tt">pip install numpy</span>) y pegar los nuevos valores en las constantes de <span class="tt"><a class="el" href="class_detector_logistico.html" title="Clasifica cada muestra (temperatura, tacto) como normal o anomalia.">DetectorLogistico</a></span>.</p>
+<h3 class="doxsection"><a class="anchor" id="autotoc_md20"></a>
+Qué datos se usaron: aclaración</h3>
+<p>El entrenamiento usa <b>datos simulados</b> en espacio z, no mediciones reales del ESP32. Esto es válido porque el ESP32 normaliza sus lecturas con su propia calibración: el modelo solo ve "qué tan
+lejos de lo normal", y eso se puede simular. La validación con datos reales se hizo después, en las pruebas con el cable (sección 6).</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md21"></a>
+5. Qué hace el equipo con la decisión</h2>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Resultado  </th><th class="markdownTableHeadNone">LED  </th><th class="markdownTableHeadNone">Comportamiento  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Normal  </td><td class="markdownTableBodyNone">Rojo + amarillo fijos  </td><td class="markdownTableBodyNone">Muestrea cada 5 s.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">Anomalía  </td><td class="markdownTableBodyNone">Amarillo parpadeando rápido  </td><td class="markdownTableBodyNone">Muestrea cada <b>1 s</b> y envía <span class="tt">anomalia: true</span>.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">Sensor caído  </td><td class="markdownTableBodyNone">Rojo parpadeando rápido  </td><td class="markdownTableBodyNone">Ver abajo.  </td></tr>
+</table>
+<p><b>Sensor caído:</b> no lo decide el modelo, sino una regla simple. Si el tacto vale 2 o menos <b>seis veces seguidas</b> (cable a GND), se declara fallo del sensor y no se evalúa la IA. Es distinto de un toque: al tocar, el valor baja pero rara vez queda pegado en cero tanto tiempo.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md22"></a>
+6. Validación</h2>
+<ul>
+<li><b>En el PC (simulación con <span class="tt">g++</span>):</b> con la calibración hecha, el detector no dio falsos positivos en 2200 muestras normales y detectó 200 de 200 anomalías simuladas.</li>
+<li><b>En el ESP32 (datos reales):</b> el monitor muestra <span class="tt">anom=1 p=1.00</span> al tocar el cable, y <span class="tt">anom=0</span> con <span class="tt">p</span> de 0.00 a 0.08 al soltarlo. El servidor registra <span class="tt">anomalia: True</span> y <span class="tt">False</span> en esos momentos (ver <a class="el" href="evidencias.html">Evidencias de las pruebas</a>).</li>
+</ul>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md23"></a>
+7. Limitaciones</h2>
+<ul>
+<li>La <b>calibración debe ser limpia</b>: si se toca el cable en los primeros 2.5 minutos, el modelo toma ese comportamiento como normal. La calibración no se guarda, así que se repite en cada reinicio.</li>
+<li>Los pesos se entrenaron con <b>datos simulados</b>, no con anomalías reales etiquetadas.</li>
+<li>Con dos variables y una frontera simple (suma de desviaciones) el modelo es muy sencillo. Detecta bien valores extremos, pero no detectaría un patrón raro formado por valores individualmente normales.</li>
+<li>Como la temperatura del chip depende de la carga del Wi-Fi, un calentamiento brusco (más de unos 4 °C) se marcaría como anomalía. </li>
+</ul>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="index.html">ESP32 OTA con IA</a></li>
+    <li class="footer">Generado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+  </ul>
+</div>
+</body>
+</html>

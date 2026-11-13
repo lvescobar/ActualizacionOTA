@@ -1,0 +1,20 @@
+# Doxyfile minimo (el resto de opciones toma el valor por defecto)
+PROJECT_NAME           = "ESP32 OTA con IA"
+PROJECT_BRIEF          = "OTA seguro, rollback por software y deteccion de anomalias con regresion logistica"
+OUTPUT_DIRECTORY       = docs
+OUTPUT_LANGUAGE        = Spanish
+INPUT                  = README.md documentacion src servidor entrenamiento
+FILE_PATTERNS          = *.cpp *.h *.py *.md
+RECURSIVE              = YES
+EXCLUDE                = servidor/fw .pio src/secrets.h
+EXTRACT_ALL            = YES
+EXTRACT_STATIC         = YES
+USE_MDFILE_AS_MAINPAGE = README.md
+OPTIMIZE_OUTPUT_JAVA   = NO
+GENERATE_HTML          = YES
+GENERATE_LATEX         = NO
+SOURCE_BROWSER         = YES
+IMAGE_PATH            = imagenes
+TOC_INCLUDE_HEADINGS    = 3
+GENERATE_TREEVIEW      = YES
+HTML_EXTRA_FILES       = imagenes/05_ota_v110.mp4 imagenes/06_ota_v120.mp4 imagenes/07_anomalia.mp4

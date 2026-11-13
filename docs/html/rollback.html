@@ -1,0 +1,162 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=11"/>
+<meta name="generator" content="Doxygen 1.14.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>ESP32 OTA con IA: Rollback por software</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<script type="text/javascript" src="clipboard.js"></script>
+<link href="navtree.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="navtreedata.js"></script>
+<script type="text/javascript" src="navtree.js"></script>
+<script type="text/javascript" src="cookie.js"></script>
+<link href="search/search.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="search/searchdata.js"></script>
+<script type="text/javascript" src="search/search.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr id="projectrow">
+  <td id="projectalign">
+   <div id="projectname">ESP32 OTA con IA
+   </div>
+   <div id="projectbrief">OTA seguro, rollback por software y deteccion de anomalias con regresion logistica</div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Generado por Doxygen 1.14.0 -->
+<script type="text/javascript">
+var searchBox = new SearchBox("searchBox", "search/",'.html');
+</script>
+<script type="text/javascript">
+$(function() { codefold.init(); });
+</script>
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+$(function() {
+  initMenu('',true,false,'search.php','Buscar',true);
+  $(function() { init_search(); });
+});
+</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div id="side-nav" class="ui-resizable side-nav-resizable">
+  <div id="nav-tree">
+    <div id="nav-tree-contents">
+      <div id="nav-sync" class="sync"></div>
+    </div>
+  </div>
+  <div id="splitbar" style="-moz-user-select:none;" 
+       class="ui-resizable-handle">
+  </div>
+</div>
+<script type="text/javascript">
+$(function(){initNavTree('rollback.html','',''); });
+</script>
+<div id="container">
+<div id="doc-content">
+<!-- window showing the filter options -->
+<div id="MSearchSelectWindow"
+     onmouseover="return searchBox.OnSearchSelectShow()"
+     onmouseout="return searchBox.OnSearchSelectHide()"
+     onkeydown="return searchBox.OnSearchSelectKey(event)">
+</div>
+
+<!-- iframe showing the search results (closed by default) -->
+<div id="MSearchResultsWindow">
+<div id="MSearchResults">
+<div class="SRPage">
+<div id="SRIndex">
+<div id="SRResults"></div>
+<div class="SRStatus" id="Loading">Cargando...</div>
+<div class="SRStatus" id="Searching">Buscando...</div>
+<div class="SRStatus" id="NoMatches">Nada coincide</div>
+</div>
+</div>
+</div>
+</div>
+
+<div><div class="header">
+  <div class="headertitle"><div class="title">Rollback por software </div></div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><p>Un OTA puede instalar correctamente un firmware que luego <b>no funciona</b> (por ejemplo, se reinicia en bucle). El rollback es el mecanismo que devuelve el equipo a la versión anterior.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md33"></a>
+Idea</h2>
+<p>Después de un OTA, el firmware nuevo está "a prueba". Se cuentan sus arranques; si llega a <b>3 arranques sin validarse</b>, se marca como mala y se vuelve a la otra partición.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md34"></a>
+Datos que se guardan (memoria NVS)</h2>
+<p>La memoria no volátil NVS conserva los datos aunque el equipo se reinicie. Se usa el espacio de nombres <span class="tt">fw</span> con tres claves:</p>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Clave  </th><th class="markdownTableHeadNone">Significado  </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">pending</span>  </td><td class="markdownTableBodyNone"><span class="tt">true</span> si el firmware actual es nuevo y todavía no se validó.  </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone"><span class="tt">tries</span>  </td><td class="markdownTableBodyNone">Cuántos arranques lleva sin validarse.  </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone"><span class="tt">bad</span>  </td><td class="markdownTableBodyNone">Versión que fue rechazada por el rollback (para no volver a instalarla).  </td></tr>
+</table>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md35"></a>
+Qué hace el código</h2>
+<ol type="1">
+<li><b>Después del OTA</b> (<span class="tt">checkOTA</span>): <span class="tt">pending = true</span>, <span class="tt">tries = 0</span> y reinicio.</li>
+<li><b>En cada arranque</b> (<span class="tt">bootCheck</span>, dentro de <span class="tt"><a class="el" href="main_8cpp.html#a4fc01d736fe50cf5b977f755b675f11d" title="Se ejecuta una vez al encender: pines, rollback y Wi-Fi.">setup()</a></span>): si <span class="tt">pending</span> es <span class="tt">true</span>, suma 1 a <span class="tt">tries</span> y muestra <span class="tt">Arranque sin validar N/3</span>.</li>
+<li><b>Si <span class="tt">tries</span> llega a 3</b>: imprime <span class="tt">ROLLBACK</span>, guarda la versión en <span class="tt">bad</span>, pone <span class="tt">pending = false</span> y cambia la partición de arranque a la anterior (<span class="tt">esp_ota_set_boot_partition</span>), seguido de un reinicio.</li>
+<li><b>Si el firmware funciona</b> (<span class="tt">marcarValida</span>): cuando conecta al Wi-Fi y toma su primera muestra correcta, pone <span class="tt">pending = false</span> y <span class="tt">tries = 0</span>. El firmware queda validado.</li>
+<li><b>Después del rollback</b>, <span class="tt">checkOTA</span> ignora la versión guardada en <span class="tt">bad</span>, así el equipo no vuelve a descargar la versión mala una y otra vez.</li>
+</ol>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md36"></a>
+La versión 1.3.0: una versión mala a propósito</h2>
+<p>El entorno <span class="tt">v130</span> se compila con <span class="tt">-DSIMULAR_FALLO</span>. Con esa bandera:</p>
+<ul>
+<li>el código ejecuta <span class="tt">ESP.restart()</span> a los 8 segundos de arrancar, y</li>
+<li><b>nunca</b> llama a <span class="tt"><a class="el" href="main_8cpp.html#ac1b41681ced428a5cb0848b408b11c75" title="Confirma que el firmware nuevo funciona (cancela el rollback).">marcarValida()</a></span>.</li>
+</ul>
+<p>Resultado: la versión 1.3.0 se instala bien (el hash es correcto), pero se reinicia sola tres veces sin validarse.</p>
+<h2 class="doxsection"><a class="anchor" id="autotoc_md37"></a>
+Secuencia esperada en el monitor</h2>
+<div class="fragment"><div class="line">Actualizando a 1.3.0              (descarga e instalación)</div>
+<div class="line">FW 1.3.0</div>
+<div class="line">Arranque sin validar 1/3</div>
+<div class="line">FW 1.3.0</div>
+<div class="line">Arranque sin validar 2/3</div>
+<div class="line">FW 1.3.0</div>
+<div class="line">Arranque sin validar 3/3</div>
+<div class="line">ROLLBACK: se vuelve a la version anterior</div>
+<div class="line">FW 1.2.0</div>
+</div><!-- fragment --><h2 class="doxsection"><a class="anchor" id="autotoc_md38"></a>
+Limitación</h2>
+<p>Este rollback es <b>por software</b>: solo cubre fallos que ocurren cuando el programa ya está corriendo (desde <span class="tt"><a class="el" href="main_8cpp.html#a4fc01d736fe50cf5b977f755b675f11d" title="Se ejecuta una vez al encender: pines, rollback y Wi-Fi.">setup()</a></span>). Si el firmware nuevo se cuelga antes, en el bootloader, no se detecta. Para eso haría falta activar <span class="tt">CONFIG_APP_ROLLBACK_ENABLE</span> en ESP-IDF. </p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+</div><!-- doc-content -->
+<div id="page-nav" class="page-nav-panel">
+<div id="page-nav-resize-handle"></div>
+<div id="page-nav-tree">
+<div id="page-nav-contents">
+</div><!-- page-nav-contents -->
+</div><!-- page-nav-tree -->
+</div><!-- page-nav -->
+</div><!-- container -->
+<!-- start footer part -->
+<div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
+  <ul>
+    <li class="navelem"><a href="index.html">ESP32 OTA con IA</a></li>
+    <li class="footer">Generado por <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.14.0 </li>
+  </ul>
+</div>
+</body>
+</html>
